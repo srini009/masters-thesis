@@ -1,0 +1,34 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Introduction}
+%takes p.78~ of ETD Style Manual
+
+This paper assumes the reader is familiar with sets and lists and the differences between them, specifically that lists can have repeated values and every value has an index number. Additionally, a list can be treated as a stack and queue via the push/pop and insert/remove operations. The appendix defines the additional functions needed to induce set behavior from odometers.
+
+This paper introduces all terms first:  odometer, hyperedge, hypergraph, transversal, generalized variable and compact minimal transversal.  This paper extends and explains the following definitions and the relationships in later sections: An \emph{odometer} is a list of numbers. A \emph{hyperedge} is a list of nodes. A \emph{hypergraph} is a list of \emph{hyperedge}s and a list of nodes. A \emph{transversal} is a list of nodes that hit every \emph{hyperedge} in a \emph{hypergraph}. A \emph{generalized variable} (GV) is an \emph{odometer}. Lastly, a \emph{compact minimal transversal} (CMT) is a list of \emph{odometer}s. 
+
+Hypergraphs are a generalization of graphs that allow edges to contain more than two nodes. All graphs are hypergraphs; thus, all graph problems should have a related hypergraph problem. Restating a problem formally when the edge count is greater than two can be difficult and sometimes there is no obvious translation. 
+
+ Finding all minimal traversals of a hypergraph is comparable to the finding of all vertex cover sets of a graph, hypergraphs specifically. This problem has been shown to be equivalent to the NP-Complete problem space and is a significant and worthy problem in computation, especially in AI. \cite{eiter1991transveral,eiter1995identifying,reiter1987theory,de1987diagnosing}.
+
+The complete minimal solution space to both winning and losing games of Connect-4 is used as a test dataset in this paper. A theoretical AI player with access to these results could use them to guide perfect play.
+
+
+A simple real world example of the problem is derived from Facebook; find a set of people who know every other user. Finding a single ``hitting set'' is known to be polynomial while finding ``all hitting sets'' is exponential. A previous recursive solution by  \cite{kavvadias2005efficient} inspired the work in this paper. The focus of this paper is a new algorithm that outputs a polynomial-polynomial space encoded representation of the entire exponential space solution.
+
+The rest of this paper is organized as follows:  \ri{Odometers} and \ri{Hypergraphs} are introduced followed by defining the problem in terms these new terms. Three iterative solutions that solve the problem are examined: naive, branch and bound, and dynamic. This paper then extends the dynamic iterative solution further with a series of optimizations. The authors ensure correctness with generative testing and validation. Future research directions focus on parallel possibilities, additional optimizations, and solution representation as output.
+
+
+ 

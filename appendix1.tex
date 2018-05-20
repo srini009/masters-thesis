@@ -1,0 +1,107 @@
+\chapter{Algorithms referenced in paper}
+
+\begin{algorithm}[htb]
+    \centering
+	\caption{Union}\label{Union}
+	\begin{algorithmic}[1]
+		\Function{$Union(A,B)$}{}
+		\State $returnValue \gets \emptyset$ 
+		\ForAll {$\{n,i\} \in A$}
+		\If {$!returnValue.contains(n)$}
+		\State $returnValue.push(n)$
+		\EndIf
+		\EndFor
+		\ForAll {$\{n,i\} \in B$}
+		\If {$!returnValue.contains(n)$}
+		\State $returnValue.push(n)$
+		\EndIf
+		\EndFor
+		\State \Return $returnValue$ 
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htb]
+    \centering
+	\caption{Unionize}\label{Unionize}
+	\begin{algorithmic}[1]
+		\Function{$Unionize(list\_of\_o)$}{}
+		\State $returnValue \gets \emptyset$ 
+		\ForAll {$\{o,i\} \in list\_of\_o$}
+		\State $returnValue \gets Union(returnValue,o)$
+		\EndFor
+		\State \Return $returnValue$ 
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htb]
+    \centering
+	\caption{Intersection}\label{Intersection}
+	\begin{algorithmic}[1]
+		\Function{$Intersection(A,B)$}{}
+		\State $returnValue \gets \emptyset$ 
+		\ForAll {$ \{n_A,i_A\} \in A$}
+		\ForAll {$ \{n_B,i_B\} \in B$}
+		\If{$n_A = n_B$}
+		\State $returnValue.push(n_A)$
+		\EndIf
+		\EndFor
+		\EndFor
+		\State \Return $returnValue$ 
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[htb]
+    \centering
+	\caption{Minus}\label{Minus}
+	\begin{algorithmic}[1]
+		\Function{$Minus(A,B)$}{}
+		\State $returnValue \gets \emptyset$
+		\ForAll {$ \{n_A,i_A\} \in A$}
+		\State $add \gets true$
+		\ForAll {$ \{n_B,i_B\} \in B$}
+		\If {$n_A =n_B$}
+		\State $add \gets false$
+		\EndIf
+		\EndFor
+		\If {$add = true$}
+		\State $returnValue.push(n_A)$
+		\EndIf
+		\EndFor
+		\State \Return $returnValue$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htb]
+    \centering
+	\caption{StrictEqual}\label{StrictEqual}
+	\begin{algorithmic}[1]
+		\Function{$StrictEqual(A,B)$}{}
+		\ForAll {$ \{n_A,i_A\} \in A$}
+		\ForAll {$ \{n_B,i_B\} \in B$}
+		\If {$n_A !=n_B$}
+		\State \Return $false$
+		\EndIf
+		\EndFor
+		\EndFor
+		\State \Return $true$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htb]
+    \centering
+	\caption{SetEqual}\label{SetEqual}
+	\begin{algorithmic}[1]
+		\Function{$SetEqual(A,B)$}{}
+		\State $A \gets Sort(A)$;
+		\State $B \gets Sort(B)$;
+		\State \Return $StrictEqual(A,B)$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+

@@ -1,0 +1,62 @@
+
+\documentclass[dissertation, copyright, final]{uothesis}
+\usepackage[english,UKenglish]{babel}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{natbib}
+\usepackage{mathtools} 
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{float}
+\usepackage{url}
+\usepackage{pgf}
+\usepackage[noend]{algpseudocode}
+\usepackage{xspace}
+
+\newcommand{\ri}[1]{\textbf{ #1 } (Algorithm \ref{#1})\xspace}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\algnewcommand\algorithmicswitch{\textbf{switch}}
+\algnewcommand\algorithmiccase{\textbf{case}}
+\algnewcommand\algorithmicassert{\texttt{assert}}
+\algnewcommand\Assert[1]{\State \algorithmicassert(#1)}%
+% New "environments"
+\algdef{SE}[SWITCH]{Switch}{EndSwitch}[1]{\algorithmicswitch\ #1\ \algorithmicdo}{\algorithmicend\ \algorithmicswitch}%
+\algdef{SE}[CASE]{Case}{EndCase}[1]{\algorithmiccase\ #1}{\algorithmicend\ \algorithmiccase}%
+\algtext*{EndSwitch}%
+\algtext*{EndCase}%
+
+
+%%%PREFATORY PAGES
+\include{cover}
+\include{abstract}
+\include{cv}
+\include{acknowledgements}  %%acknowledgements page optional
+\include{dedication} %%dedication page optional
+
+%%%MAIN DOCUMENT
+\begin{document}
+\maketitle
+%%%CHAPTERS
+\include{chapter1}
+\include{chapter2}
+\include{chapter3}
+\include{chapter4}
+\include{chapter5}
+\include{chapter6}
+\include{chapter7}
+\include{chapter8}
+\include{chapter9}
+\include{chapter10}
+%%%APPENDICES
+\appendix
+\include{appendix1}
+%%BIBILIOGRAPHY
+\bibliographystyle{unsrtnat}
+\bibliography{dissbib} %%disbib.bib uses BibTex formatting.
+\end{document}

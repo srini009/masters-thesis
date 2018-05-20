@@ -1,0 +1,409 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Dynamic Solution}\label{chapter:dynamic}
+
+The dynamic solution to the NP-Complete problem uses a list of polynomial encodings to represent the entire exponential encoded space. The  algorithm will update the individual representations and generate all new potential transversals. The new potential transversals are validated against the previous transversals and only appropriates ones are used to update the new representation.
+
+\begin{definition}
+Let a generalized variable $GV$ be an odometer of indices in the original hypergraph. All hyperedges $E$ (odometer) are generalized variables $GV$ (odometer) and can be interchanged directly.
+\end{definition}
+
+Each generalized variable $GV$ represents a choice or selection that must be made from the current hyperedge. Selecting \emph{any} value in a generalized variable will satisfy a minimal hitting set property. 
+
+\begin{definition}
+Let a compact minimal transversal $CMT$ be a list of generalized variables $GV$. A $CMT$ represents a group of transversals. Selecting one value from each $GV$ will hit all of the associated hyperedges. A list of $CMT$s is used to store the representation of all transversals for a hypergraph.
+\end{definition}
+
+
+\section{Generalized Variable Type}
+
+The main procedure \ri{TransversalsByCMT} depends on \ri{IntersectCMTWithEdge} to  derive the next solution representation given the new hyperedge. Given a $CMT$ and a new hyperedge $e'$, the \textit{type} of each $GV$ in a $CMT$ can be determined in relation to the hyperedge $e'$. The type is used to generate all of the child minimal transversals in the main procedure.
+
+\begin{definition}
+Let the type of $GV$ be $\alpha$ if $Intersection(GV,e') = \emptyset$. 
+Let $Alphas$ be a list of $GV$ of type $\alpha$.
+\end{definition}
+
+\begin{definition}
+Let the type of $GV$ be $\beta$ if $Intersection(GV,e') = GV$.
+Let $Betas$ be a list of $GV$ of type $\beta$.
+\end{definition}
+
+\begin{definition}
+Let the type of $GV$ be $\gamma$ if $GV$ partially covers $e'$.
+Let $Gamma$ be $(XMinusY, XIntersectY, YMinusX)$, where $XMinusY$ is $Minus(GV,e')$, $XIntersectY$ is $Intersection(GV,e')$, and $YMinusX$ is $Minus(e',GV)$.  
+Let $Gammas$ be a list of $Gamma$.
+\end{definition}
+
+\begin{definition}
+Let $IHGResult$ be $(Alphas,Betas,Gammas,new\_alpha,CMTResult)$  where $Alphas$, $Betas$, and $Gammas$ were previously defined, $new\_alpha$ is $e'$ minus the union of all $Betas$ and $XIntersectY$. $CMTResult$ can be one of the following values $\{ContainsAtLeastOneBeta,ContainsOnlyAlphas,ContainsGammas\}$.
+\end{definition}
+
+The function \ri{IntersectCMTWithEdge} determines the type of all $GV$s in a $CMT$ in relation to a new hyperedge $e$. The collections of different types will be used to generate the minimal transversals that can be derived from the current $CMT$ and the new hyperedge $e$.
+
+\begin{algorithm}[H]
+    \centering
+	\caption{IntersectCMTWithEdge}\label{IntersectCMTWithEdge}
+	\begin{algorithmic}[1]
+		\Function{$IntersectCMTWithEdge(CMT,e)$}{}
+		\State $return\_value \gets \emptyset$ \Comment{IHGResult}
+		\State $return\_value.new\_alpha \gets e$ \Comment{copy incoming edge}
+		\ForAll {$\{GV,i\} \in CMT $}
+		\State $intersect = Intersection(GV,e)$
+		\State $return\_value.new\_alpha \gets Minus(return\_value.new\_alpha,intersect)$
+		\If {$intersect.size()=0$} \Comment{Alpha type}
+		\State $return\_value.Alphas.push(g)$
+		\Else
+		\If {$intersect.size()=g.size()$} \Comment{Beta type}
+		\State $return\_value.Betas.push(g)$		
+		\Else
+		\State $gamma \gets \emptyset$ \Comment{Gamma type}
+		\State $gamma.XMinusY = Minus(g,edge)$
+		\State $gamma.XIntersectY = interset$
+		\State $gamma.YMinusX = Minus(edge,g)$
+		\State $return\_value.Gammas.push(gamma)$
+		\EndIf
+		\EndIf
+		\EndFor
+		\If {$return\_value.Betas.size()>0$}
+		\State $return\_value.CMTResult \gets ContainsAtLeastOneBeta$
+		\Else
+		\If {$return\_value.Gammas.size()>0$}
+		\State $return\_value.CMTResult \gets ContainsOnlyAlphas$
+		\Else
+        \State $return\_value.CMTResult \gets ContainsGammas$		
+		\EndIf
+		\EndIf
+		\State \Return $return\_value$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+
+
+\section{Generating New Potential Transversals}
+
+The main procedure \ri{TransversalsByCMT} is a dynamic update routine. The local variables \emph{old-stack} and \emph{new-stack} contain all previous minimal transversals encodings and all the next, respectively. Each update will consider each of the previous $CMT$ with regard to each new edge $e'$. The results of \ri{IntersectCMTWithEdge} are used to derive the generated child $CMT$. Each appropriate $CMT$ is then added to the next representation. After all the edges are considered the final representation contains all of the minimal transversals of the hypergraph.  Lastly, calling \ri{ExtractTransversals} for each $CMT$ enumerates all of the transversals in the representation. The original proof with complete mathematical details is available in the previous works ~\cite{kavvadias2005efficient}. Unfortunately, restructuring these proofs for this paper is beyond ability of the author at this time.
+
+If there are any $GV$ of type $Beta$ then the current $CMT$ will always hit the new edge. All the transversals in the $CMT$ will hit the new edge. Hence, we add the $CMT$ to the next list of transversals.
+
+If there are no $Gamma$, then all $GV$ are of type $Alpha$. Each piecewise item in the new edge $e'$ needs to be added to each of the transversals in the $CMT$ and considered as a child $CMT$. Each new child $CMT$ contains a single $GV$ containing a single node from the edge. The newly generated child transversal now hits the new edge but it may contain a non-minimal transversal that needs to be removed. \ri{ProcessNewCMT} handles the removal of inappropriate transversals and the updates to the representation. 
+
+If there are any $Gamma$, then there are $2^{|Gamma|}$ possible combinations of intersecting and non-intersecting $GV$ that need to be considered. There is the special outer section case that needs to be considered first when there are both intersecting parts and also new nodes to pick from. When picking all of the outer sections of the $Gamma$, for each new $Alpha$, we add a new child $CMT$. Next, initialize the counters and iterate all of the exponential combinations that hit the new edge $e'$. For each of the newly generated combinations, they can contain transversals that are non-minimal transversals. \ri{ProcessNewCMT} handles the removal of inappropriate transversals and updates the next representation. 
+
+\ri{ExtractTransversals} is leveraged to enumerate the entire $CMT$ representation, passing each transversal to the visitor function. The mundane helper functions \ri{GenNextAlpha}, \ri{GenFirstGamma}, and \ri{GenNextGamma} are variations on \ri{TransversalsByNaive} as they update the case specific odometer. 
+
+\begin{algorithm}[H]
+    \centering
+	\caption{TransversalsByCMT}
+	\label{TransversalsByCMT}
+	\begin{algorithmic}[1]
+		\Function{$TransversalsByCMT(H,CallbackFunc)$}{}
+		\State $frame \gets \emptyset$ \Comment{CMT}
+		\State $old\_stack \gets \emptyset$ \Comment{List of CMT}
+		\State $new\_stack \gets \emptyset$ \Comment{List of CMT}
+		\State $frame.push(H.Edges[0])$ \Comment{Extract the 0th hyperedge as a GV}
+		\State $old\_stack.push(frame)$
+		\ForAll{$\{e,i\} \in H.Edges $}{} \Comment{Starts at 1}
+		
+		\ForAll{$\{frame,index\} \in old\_stack$}{}
+		\State $result \gets IntersectCMTWithEdge(frame,e)$
+		\State $new\_cmt \gets \emptyset, alpha \gets \emptyset, gamma \gets \emptyset$
+		\Switch{$result.CMTResult$}
+		\Case $ContainsAtLeastOneBeta$
+		\State $CondenseMinimalTransversals(new\_stack,frame)$
+		\EndCase
+		\Case $ContainsOnlyAlphas$
+		\State $alpha.push(0)$
+		\While{$GenNextAlpha(result,alpha,new\_cmt,frame)$}{}
+		\State $ProcessNewCMT(new\_cmt,old\_stack,new\_stack,index)$
+		\EndWhile
+		\EndCase
+		\Case $ContainsGammas$
+		\If{$result.new\_alpha.size()>0$}
+		\State $alpha.push(0)$
+		\While{$GenFirstGamma(result,alpha,new\_cmt)$}{}
+		\State $ProcessNewCMT(new\_cmt,old\_stack,new\_stack,index)$
+		\EndWhile
+		\EndIf
+		\ForAll{$\{g,i\} \in result.Gammas$}{}
+		\State $gamma.push(0)$
+		\EndFor
+		\While{$GenNextGamma(result,gamma,new\_cmt)$}{}
+		\State $ProcessNewCMT(new\_cmt,old\_stack,new\_stack,index)$
+		\EndWhile
+		
+		\EndCase
+		\EndSwitch
+		
+		\EndFor
+		\State $old\_stack \gets new\_stack$
+		\State $new\_stack \gets \emptyset$
+        \EndFor
+        
+        \ForAll{$\{cmt,i\} \in old\_stack$}{}  \Comment{Enumerate the transversals now.}
+        \State $ExtractTransversals(cmt,CallbackFunc,H)$
+        \EndFor
+        
+        \EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+
+
+
+\newpage
+\section{Iterative Generation}
+\ri{GenNextAlpha}, \ri{GenFirstGamma}, and \ri{GenNextGamma} are iterative helper algorithms which update odometers to enumerate and generate each child $CMT$. These routines rely upon initialization of the counter odometer correctly.
+
+\ri{GenNextAlpha} will enumerate all the child $CMT$ that must be generated when the previous $CMT$ does not intersect in any way. A single odometer is used to select the correct vertex to add.  If the current index value in the odometer is greater then the size of the odometer, then enumeration has finished. Otherwise, the current index value in the odometer is the index of the new vertex (index). Extract the vertex-index and add it to a new odometer. Copy the previous $CMT$ and add the new odometer. The newly generated $CMT$ will now contain an odometer that ``hits'' the new edge being considered.
+
+\begin{algorithm}[H]
+    \centering
+	\caption{GenNextAlpha}\label{GenNextAlpha}
+	\begin{algorithmic}[1]
+		\Function{$GenNextAlpha(result,gen,new\_cmt,old\_cmt)$}{}
+		
+		\If {$gen[0]>= result.new\_alpha.size()$}
+		\State \Return $false$
+		\EndIf
+		\State $new\_cmt \gets old\_cmt$
+		\State $o \gets \emptyset$
+		\State $o.push(result.new\_alpha[gen[0]])$
+		\State $gen[0] \gets gen[0] +1$
+		\State $new\_cmt.push(o)$
+		\State \Return $true$ 
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\ri{GenFirstGamma} is similar to \ri{GenNextAlpha} as the algorithm needs to perform the same iterative piecewise addition for the outer section. There are $2^N$ combinations of gamma odometers that must be generated. The outer section is a special case that must be handled separately. All non-intersecting parts of the odometers in a $CMT$ are selected, each non-intersecting part of the new edge being considered is added during each iteration.
+
+\begin{algorithm}[H]
+    \centering
+	\caption{GenFirstGamma}\label{GenFirstGamma}
+	\begin{algorithmic}[1]
+		\Function{$GenFirstGamma(result,gen,new\_cmt)$}{}
+		
+		\If {$gen[0]>= result.new\_alpha.size()$}
+		\State \Return $false$
+		\EndIf
+		\State $new\_cmt \gets result.Alphas$
+		\ForAll{$\{g,i\} \in result.Gammas$}{}
+		\State $new\_cmt.push(g.XMinusY)$
+		\EndFor
+		\State $o \gets \emptyset$
+		\State $o.push(result.new\_alpha[gen[0]])$
+		\State $gen[0] \gets gen[0] +1$
+		\State $new\_cmt.push(o)$
+		\State \Return $true$ 
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\ri{GenNextGamma} advances through the $2^N -1$ combinations, generating each possible minimal intersection of $GV$ that hits the new edge. 
+
+\begin{algorithm}[H]
+    \centering
+	\caption{GenNextGamma}\label{GenNextGamma}
+	\begin{algorithmic}[1]
+		\Function{$GenNextAlpha(result,gen,new\_cmt)$}{}
+		\State $sizes \gets \emptyset$
+		\ForAll{$\{g,i\} \in gen $}{}
+		\State $sizes.push(2)$
+		\EndFor
+		\If{$false = IncrementCombinationCounter(gen,sizes)$}
+		\State \Return $false$
+		\EndIf
+		\State $new\_cmt \gets result.Alphas$
+		\ForAll{$\{g,i\} \in gen $}{}
+		\If {$g = 0 $}
+		\State $new\_cmt.push(result.Gammas[g].XMinusY)$
+		\Else
+		\State $new\_cmt.push(result.Gammas[g].XIntersectY)$
+		\EndIf
+		\EndFor
+		\State \Return $true$ 
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\newpage
+\section{Processing New Transversals}
+
+All new \textit{potential} minimal transversals are now properly generated by the preceding routines. Each of the new \textit{potential} minimal transversals needs to be considered in order to see if the child should actually be added to the next set of real minimal transversals. If any new \textit{potential} minimal transversal \textit{hits} any previous minimal transversal then the newly generated child is not appropriate, as noted in previous work by \cite{kavvadias1999evaluation, kavvadias2005efficient}.
+
+All transversals in a child $CMT$ must be extracted and considered in order to determine if it  hits a previous transversal.
+An interesting result is that not all \textit{previous} transversals need be extracted from each $CMT$. A transversal that $hits$ every $GV$ in a $CMT$ is not an appropriate transversal to be added. \ri{ProcessNewCMT} extracts all transversals from the $CMT$ and if any hit a previous $CMT$ they not added to the next solution list of $CMT$.
+
+\begin{algorithm}[H]
+    \centering
+	\caption{ProcessNewCMT}\label{ProcessNewCMT}
+	\begin{algorithmic}[1]
+		\Function {$ProcessNewCMT(new\_cmt,old\_stack,new\_stack,index)$} {}
+		\State $sizes \gets \emptyset, indices \gets \emptyset$
+		\State $GenerateCombinationCounters(new\_cmt,indices,sizes);$
+		\State $done \gets false$
+		\While{$!done$}{}
+		
+		\State $transversal \emptyset$
+		\State $cmt \gets \emptyset$
+		\ForAll{$\{t,i\} \in new\_cmt$}{}
+		\State $value \gets t[indices[i]]$
+		\State $o \gets \emptyset$
+		\State $o.push(value)$
+		\State $transversal.push(value)$
+		\State $cmt.push(o)$
+		\EndFor
+		\State $done \gets IncrementCombinationCounter(indices,sizes)$
+		\State $add\_t \gets true$
+		\ForAll{$\{ot,oi\} \in old\_stack $}{}
+		\If{ $oi= index$}
+		\State $continue$
+		\EndIf
+		\If {$DoesAHitAll(transversal,ot)$ }
+		\State $add\_t \gets false$
+		\State $break$
+		\EndIf
+		\EndFor
+		\If {$add\_t$}
+		\State $CondenseMinimalTransversals(new\_stack,cmt)$
+		\EndIf
+		
+		\EndWhile
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+
+\newpage
+\section{Transversal Extraction}
+
+The \ri{ExtractTransversals} extracts all transversals from a $CMT$ in exponential time. Each transversal is constructed via index combination counters over the $CMT$.  \ri{TransversalsByCMT} leverages this function to extract the final transversals. 
+
+\begin{algorithm}[H]
+    \centering
+    \caption{ExtractTransversals}
+    \label{ExtractTransversals}
+   
+	\begin{algorithmic}[1]
+		\Function{$ExtractTransversals(CMT,ProcessTransversal,H)$}{}
+		\State $sizes \gets \emptyset$ 
+		\State $indices \gets \emptyset$
+		\State $GenerateCombinationCounters(CMT,indices,sizes)$
+		\State $done \gets false$
+		\While {$done = false $} {}
+        	\State $o \gets \emptyset$
+        	\ForAll {$\{t,i\} \in CMT$}{}
+        	\State $value \gets t[indices[i]]$
+        	\State $o.push(value)$
+        	\EndFor
+        	\State $ProcessTransversal(o,OtoE(H,o))$
+        	\State $done \gets IncrementCombinationCounter(indices,sizes)$
+		\EndWhile
+		\EndFunction
+	\end{algorithmic}
+    
+\end{algorithm}
+
+ A $CMT$ can be merged with another $CMT$ if and only if the following holds: they both contain the same number of generalized variables and there is only one generalized variable in both transversals that are not equivalent. Two $CMT$s that are different by only one $GV$ represent the same output transversals. The following function \ri{MergeTransversal} tests if two $CMT$s can be merged and does so if they can.
+ 
+\begin{algorithm}[H]
+    \centering
+	\caption{MergeTransversal}
+	\label{MergeTransversal}
+	
+	\begin{algorithmic}[1]
+		\Function{$MergeTransversal(CMT_a,CMT_b,CMT_{result})$}{}
+		\If {$CMT_a.size() != CMT_b.size()$}
+		\State \Return $false$
+		\EndIf
+		\State $diff\_count \gets 0, s\gets 0$
+		\While {$ s < CMT_a.size()$} {}
+		\State $match \gets false, t \gets 0$
+		\While {$t < CMT_b.size()$}
+		\If {$SetEqual(CMT_a[s],CMT_b[t])$}
+		\State $CMT_{result}.push(CMT_b[t])$
+		\State $CMT_b.erase(t)$
+		\State $t \gets t-1$
+		\State $match \gets true$
+		\State $break$
+		\EndIf
+		\State $t \gets t+1$
+		\EndWhile
+		\If {$match$}
+		\State $CMT_a.erase(s)$
+		\State $s\gets s-1$
+		\Else
+		\If {$diff\_count > 0$}
+		\State \Return $false$
+		\Else
+		\State $diff\_count \gets diff\_count +1$
+		\EndIf
+		\EndIf
+		\State $s \gets s+1$
+		\EndWhile
+		\State $CMT_{result}.push(Union(CMT_a[0],CMT_b[0]))$  \Comment{Only diff left}
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+Now that two $CMT$s can be merged together, a list of $CMT$ can be collapsed into a condensed form. Given a list of $CMT$s adding one new $CMT$ can cause the entire list to collapse down to one $CMT$, as each newly merged $CMT$ can potentially be merged with a $CMT$ currently in the list. The run time for \ri{CondenseMinimalTransversals} is exponential yet the output is log linear sized. Each time a compaction happens the size of output gets smaller and compute time goes up. 
+
+
+\begin{algorithm}[H]
+    \centering
+	\caption{CondenseMinimalTransversals}
+	\label{CondenseMinimalTransversals}
+	\begin{algorithmic}[1]
+		\Function{$CondenseMinimalTransversals(list\_of\_CMT,CMT)$}{}
+		\State $holder \gets CMT$
+		\State $done \gets false$
+		\While{$!done$} {}
+		\State $compact \gets \emptyset$ 
+		\State $index \gets \emptyset$
+		\State $done \gets true$
+		\ForAll {$\{cmt,i\} \in list\_of\_CMT$}
+		\State $compact \gets \emptyset$
+		\If{ $MergeTransversal(cmt,holder,compact)$}
+		\State $index \gets i$
+		\State $holder \gets compact$
+		\State $done \gets false$
+		\State $break$
+		\EndIf
+		\EndFor
+		\If {$!done$}
+		\State $list\_of\_CMT.erase(index)$
+		\Else
+		\State $list\_of\_CMT.push(holder)$
+		\EndIf
+		\EndWhile
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+
+\newpage
+\section{Solution}
+This concludes the current form of the algorithm designated Norris-Casita-Dynamic (NC-D). The iterative solution to enumerating all minimal hypergraph traversals is now complete. Each child $CMT$ has an exponential number of transversals that are extracted in \ri{ProcessNewCMT} and added to the next set of $CMT$s. There is a shortcut in \ri{ProcessNewCMT} via the call to \ri{DoesAHitAll} which eliminates the need to extract all transversals of the old $CMT$s. 
+
+As each transversal is constructed as a $CMT$ and then added to the list of $CMT$s to be collapsed, the enumeration of all minimal transversals at each stage is guaranteed. The representation of all transversals as a list of $CMT$ is both the boon and curse of this algorithm. Calls to \ri{CondenseMinimalTransversals} are exceedingly expensive because the adjustment to the entire encoding with regard to the new transversal can take exponential time. 
+
+
+The algorithm differs from the \emph{KS} algorithm in that all solutions are computed before the first solution is enumerated. Additionally, the storage of all transversals as a list of $CMT$ is a dynamic encoding of the solution which is updated at each iteration. 
+
+The \emph{KS} algorithm uses a similar recursive solution where the call stack grows  polynomial in  the edge count. Thus, the algorithm should outperform \emph{KS} when the edge count is high enough to offset the penalty for operating on the list of $CMT$ with \ri{CondenseMinimalTransversals}. The Dual-Matching test dataset demonstrates this exact result in the results section. 

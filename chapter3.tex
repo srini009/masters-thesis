@@ -1,0 +1,103 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Hypergraphs}
+\label{Hypergraphs}
+Hypergraphs are a recent mathematical discovery which model complex combination and permutation structures. The number of potential edges in a $normal$ hypergraph is $2^N$. Traditionally a hypergraph is defined as a collection $H$ of sets  $H=(V,E)$ where $V$ is a set of vertices and $E$ is a set of hyperedges. There is no ordering and no repeated hyperedges or vertices. Abstracting from a $normal$ to an $unrestricted$ hypergraph allows the edges to grow unbounded $N^\infty$. There are only two algorithms presented in this paper that reason about $unrestricted$ hypergraphs, and  then restrictions are put in place for the rest of the algorithms. 
+
+\section{Unrestricted Hypergraphs}
+
+\begin{definition}
+Let a hyperedge $e$ be a list of vertices: $e =\{v,i\}$. The $i^{th}$  vertex of $e$ can be written $v_i = e[i]$. Vertices $v$ can be repeated, as they are distinguished via their index. Indices $i$ are unique non-repeating whole numbers from $[0,\infty]$. The size of the hyperedge written as $e.size()$ is the count of $\{v,i\}$.
+\end{definition}
+
+\begin{definition}
+Let an unrestricted hypergraph $U$ be a single hyperedge $nodes$ and the two functions $OtoE$ and $EtoO$. $OtoE$ is the surjective function to map a given odometer to a hyperedge. $EtoO$ is the injective function to map a given hyperedge to an odometer. The hyperedge $U.nodes$ cannot repeat any vertexes $v$ for the function $EtoO$ to behave correctly.
+\end{definition}
+
+Given these definitions, the following is possible given a hypergraph: a hyperedge can be constructed from an odometer, and an odometer can be constructed from a hyperedge. Thus, every instance of a hyperedge can be converted to an instance of an odometer, and every instance of an odometer can be converted to an instance of a hyperedge. Both are dependent upon the instance of the hypergraph to maintain consistency. For the rest of this paper hyperedges will be interchangeable with odometers given a hypergraph and the functions defined.  
+
+\begin{algorithm}
+    \centering
+	\caption{OdometerToHyperedge}\label{OtoE}
+	\begin{algorithmic}[1]
+		\Function{OtoE($U,o$)}{}
+		\State $e \gets \emptyset$ \Comment{e is a hyperedge}
+		\State $size \gets U.nodes.size()$ \Comment{size is an integer}
+		\ForAll {$ \{n,i\} \in o$}
+		\State $e[i] \gets U.nodes[ n \mod size ]$ \Comment{convert an integer number to index}
+		\EndFor
+		\State \Return $e$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \centering
+	\caption{HyperedgeToOdometer}\label{EtoO}
+	\begin{algorithmic}[1]
+		\Function{EtoO($U,e$)}{}
+		\State $o \gets \emptyset$ \Comment{o is an odometer}
+		\ForAll{$\{v_e,i_e\} \in e$}  \Comment{use hashmap of v to i}
+		\ForAll{$\{v_n,i_n\} \in U.nodes$} \Comment{to reduce $O(n^2)$ to $O(n)$}
+		\If {$v_e = v_n$}
+		\State $o[i_e] \gets i_n$ \Comment{lookup index and save as integer}
+		\EndIf
+		\EndFor
+		\EndFor
+		\State \Return $o$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+Notice that these functions provide liner time access to all permutations, combinations, and even repeated patterns. Hence, reasoning about a hyperedge is equivalent to reasoning about its corresponding odometer, and vice versa. 
+
+These routines allow access to every possible finite list composed of the vertexes. Converting from a list of vertices to a list of indices and back again is linear in the size of the list. Now odometers can be used in place of hyperedges and odometers can be constructed from a hyperedge given a specific hypergraph.
+
+\section{Normal Hypergraphs }
+
+
+
+ The following restrictions are imposed to get the expected behavior out of a \textit{normal} hypergraph given the unrestricted definitions. 
+ 
+ \begin{definition}
+	
+Let a \textit{normal} hypergraph be $H = (V,E)$ where $V$ is a list of vertexes $\{v,i\}$, and $E$ is a list of hyperedges $\{e,i\}$ where each hyperedge $e$ is a sublist of $V$. 
+\end{definition}
+
+
+ No hyperedge contains a duplicated vertex. Every vertex in all hyperedges is contained in the hypergraph vertices. There are no duplicate hyperedges. The maximal size of a hyperedge is the size of all hypergraph vertices. Every vertex exists in at least one hyperedge. There are no duplicate vertexes. These English statements are reiterated in formal logic notation to ensure exactness. 
+
+
+\begin{equation*}
+\begin{matrix}
+\forall e \in E , \forall v, v' \in e \vert v \ne v'\\
+\forall e \in E , \forall v \in e \vert v \in V\\
+\forall e \in E , \not\exists e' \in E \vert e = e'\\
+\forall e \in E \vert |e| \le |V|\\
+\forall v \in V , \exists e \in E \vert v \in e\\
+\forall v \in V , \not\exists v' \in V \vert v = v'\\
+\end{matrix}
+\end{equation*}
+
+\section{Simple Hypergraphs}
+\begin{definition}
+Let a $simple$ hypergraph be $H=(V,E)$ as with a $normal$ hypergraph with the additional restriction that no hyperedge fully contains any other hyperedge.
+\end{definition}
+\begin{equation*}
+\begin{matrix}
+\forall e , e' \in E \vert e \not \subseteq e' \wedge e' \not \subseteq e\\
+\end{matrix}
+\end{equation*}
