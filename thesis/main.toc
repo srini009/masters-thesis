@@ -1,2 +1,53 @@
 \select@language {UKenglish}
 \contentsline {chapter}{\numberline {I}\uppercase {Introduction}}{1}
+\contentsline {section}{ Introduction}{1}
+\contentsline {section}{ Problem Context}{3}
+\contentsline {subsection}{ Interfaces for Runtime Introspection}{4}
+\contentsline {subsection}{ Performance Recommendations}{5}
+\contentsline {subsection}{ Autotuning of MPI Runtimes}{6}
+\contentsline {subsection}{ Policy Engine for Performance Tuning}{6}
+\contentsline {chapter}{\numberline {II}\uppercase {MPI Tools Information Interface}}{7}
+\contentsline {chapter}{\numberline {III}\uppercase {Background}}{9}
+\contentsline {subsection}{ TAU Performance System$^{\textregistered }$}{9}
+\contentsline {subsection}{ MVAPICH2}{9}
+\contentsline {subsection}{ BEACON}{10}
+\contentsline {subsection}{ Target Applications}{10}
+\contentsline {subsubsection}{ AmberMD}{10}
+\contentsline {subsubsection}{ SNAP}{11}
+\contentsline {subsubsection}{ 3DStencil}{12}
+\contentsline {subsubsection}{ MiniAMR}{12}
+\contentsline {chapter}{\numberline {IV}\uppercase {Design of MPI\_T support in TAU}}{13}
+\contentsline {section}{ Design}{13}
+\contentsline {subsection}{ Enhancing MPI\_T Support in MVAPICH2}{13}
+\contentsline {subsubsection}{ Monitoring and Modifying Collective Algorithms}{13}
+\contentsline {subsubsection}{ Monitoring and Controlling Usage of Virtual Buffers}{14}
+\contentsline {subsection}{ Enabling Runtime Instrospection and Online Monitoring}{15}
+\contentsline {subsubsection}{ Gathering Performance Data}{15}
+\contentsline {subsubsection}{ Online Monitoring}{16}
+\contentsline {subsubsection}{ Viewing Performance Data}{17}
+\contentsline {subsection}{ Runtime Tuning through MPI\_T}{18}
+\contentsline {subsubsection}{ User-Guided Tuning through PYCOOLR}{19}
+\contentsline {subsection}{ Plugin Infrastructure in TAU}{20}
+\contentsline {subsubsection}{ Design Overview}{21}
+\contentsline {subsubsection}{ Plugin Events Supported}{22}
+\contentsline {subsubsection}{ Use Case: Filter Plugin to Disable Instrumentation at Runtime}{23}
+\contentsline {subsection}{ Plugins for Autotuning}{24}
+\contentsline {subsection}{ Plugins for Recommendations}{25}
+\contentsline {chapter}{\numberline {V}\uppercase {Usage Scenarios}}{28}
+\contentsline {section}{ Usage Scenarios}{28}
+\contentsline {subsection}{ Recommendation Use Case: Hardware Offloading of Collectives}{28}
+\contentsline {subsection}{ Autotuning Use Case: Freeing Unused Buffers}{29}
+\contentsline {subsubsection}{ Autotuning Policy}{30}
+\contentsline {chapter}{\numberline {VI}\uppercase {Experiments}}{35}
+\contentsline {section}{ Experiments}{35}
+\contentsline {subsection}{ Experimental Setup}{35}
+\contentsline {subsection}{ Results}{36}
+\contentsline {subsubsection}{ Amber}{36}
+\contentsline {subsubsection}{ SNAP}{37}
+\contentsline {subsubsection}{ 3DStencil}{38}
+\contentsline {subsubsection}{ MiniAMR}{39}
+\contentsline {subsection}{ Overhead in Enabling MPI\_T}{41}
+\contentsline {chapter}{\numberline {VII}\uppercase {Discussion and Future Work}}{44}
+\contentsline {section}{ Discussion}{44}
+\contentsline {section}{ Conclusion and Future Work}{45}
+\contentsline {chapter}{REFERENCES CITED}{47}

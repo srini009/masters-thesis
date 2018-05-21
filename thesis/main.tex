@@ -5,6 +5,7 @@
 \usepackage{natbib}
 \usepackage{mathtools} 
 \usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{float}
 \usepackage{url}
@@ -19,17 +20,18 @@
 \include{acknowledgements}  %%acknowledgements page optional
 \include{dedication} %%dedication page optional
 
+\newcommand{\quotes}[1]{``#1''}
 %%%MAIN DOCUMENT
 \begin{document}
 \maketitle
 %%%CHAPTERS
 \include{chapter1}
-%%%\include{chapter2}
-%%%\include{chapter3}
-%%%\include{chapter4}
-%%%\include{chapter5}
-%%%\include{chapter6}
-%%%\include{chapter7}
+\include{chapter2}
+\include{chapter3}
+\include{chapter4}
+\include{chapter5}
+\include{chapter6}
+\include{chapter7}
 %%%\include{chapter8}
 %%%\include{chapter9}
 %%%\include{chapter10}
@@ -37,6 +39,6 @@
 %%%\appendix
 %%%%\include{appendix1}
 %%BIBILIOGRAPHY
-%%%\bibliographystyle{unsrtnat}
-%%%\bibliography{dissbib} %%disbib.bib uses BibTex formatting.
+\bibliographystyle{unsrtnat}
+\bibliography{dissbib} %%disbib.bib uses BibTex formatting.
 \end{document}

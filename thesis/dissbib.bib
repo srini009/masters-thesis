@@ -1,155 +1,418 @@
-
-@BOOK{Odometer:Fuchs,
-	author = { Phillip P. Fuchs},
-	title = {Permutation Odometers},
-	publisher = {www.quickperm.org/odometers.php},
-	year = {2016}
+@misc{MPI_3_1,
+  author={{MPI Forum}},
+  title={{\textsf{MPI}: A Message-Passing Interface Standard. Version 3.1}},
+  note={\url{http://mpi-forum.org/docs/mpi-3.1/mpi31-report.pdf} (June. 2015)},
+  month={June 4th},
+  year={2015},
 }
 
-@BOOK{dualdual,
-	author = {Endre Boros},
-	title = {Dualization Code},
-	publisher = {http://rutcor.rutgers.edu/~boros/IDM/DualizationCode.html},
-	year = {2016}
+@article{PMPI,
+  title={Performance analysis of MPI programs},
+  author={Karrels, Edward and Lusk, Ewing},
+  journal={Environments and Tools for Parallel Scientific Computing},
+  pages={195--200},
+  year={1994}
 }
 
-@book{berge1984hypergraphs,
-	title={Hypergraphs: combinatorics of finite sets},
-	author={Berge, Claude},
-	volume={45},
-	year={1984},
-	publisher={Elsevier}
+@inproceedings{MVAPICH2,
+  title={{High performance RDMA-based MPI implementation over InfiniBand}},
+  author={Liu, Jiuxing and Wu, Jiesheng and Kini, Sushmitha P and Wyckoff, Pete and Panda, Dhabaleswar K},
+  booktitle={Proceedings of the 17th annual international conference on Supercomputing},
+  note = {\url{http://mvapich.cse.ohio-state.edu/}},
+  pages={295--304},
+  year={2003},
+  organization={ACM}
 }
 
-@article{khachiyan2006efficient,
-	title={An efficient implementation of a quasi-polynomial algorithm for generating hypergraph transversals and its application in joint generation},
-	author={Khachiyan, Leonid and Boros, Endre and Elbassioni, Khaled and Gurvich, Vladimir},
-	journal={Discrete Applied Mathematics},
-	volume={154},
-	number={16},
-	pages={2350--2372},
-	year={2006},
-	publisher={Elsevier}
+@inproceedings{OpenMPI,
+  title={{Open MPI: Goals, concept, and design of a next generation MPI implementation}},
+  author={Gabriel, Edgar and Fagg, Graham E and Bosilca, George and Angskun, Thara and Dongarra, Jack J and Squyres, Jeffrey M and Sahay, Vishal and Kambadur, Prabhanjan and Barrett, Brian and Lumsdaine, Andrew and others},
+  booktitle={European Parallel Virtual Machine/Message Passing Interface Users’ Group Meeting},
+  pages={97--104},
+  year={2004},
+  organization={Springer}
 }
 
-@inproceedings{boros2003efficient,
-	title={An efficient implementation of a quasi-polynomial algorithm for generating hypergraph transversals},
-	author={Boros, Endre and Elbassioni, K and Gurvich, Vladimir and Khachiyan, Leonid},
-	booktitle={European Symposium on Algorithms},
-	pages={556--567},
-	year={2003},
-	organization={Springer}
-}
-
-@article{kavvadias2005efficient,
-	title={An efficient algorithm for the transversal hypergraph generation.},
-	author={Kavvadias, Dimitris J and Stavropoulos, Elias C},
-	journal={J. Graph Algorithms Appl.},
-	volume={9},
-	number={2},
-	pages={239--264},
-	year={2005}
-}
-
-@inproceedings{kavvadias1999evaluation,
-	title={Evaluation of an algorithm for the transversal hypergraph problem},
-	author={Kavvadias, Dimitris J and Stavropoulos, Elias C},
-	booktitle={International Workshop on Algorithm Engineering},
-	pages={72--84},
-	year={1999},
-	organization={Springer}
-}
-@inproceedings{bailey2003fast,
-	title={A fast algorithm for computing hypergraph transversals and its application in mining emerging patterns},
-	author={Bailey, James and Manoukian, Thomas and Ramamohanarao, Kotagiri},
-	booktitle={Data Mining, 2003. ICDM 2003. Third IEEE International Conference on},
-	pages={485--488},
-	year={2003},
-	organization={IEEE}
-}
-
-@inproceedings{eiter2002hypergraph,
-	title={Hypergraph transversal computation and related problems in logic and AI},
-	author={Eiter, Thomas and Gottlob, Georg},
-	booktitle={European Workshop on Logics in Artificial Intelligence},
-	pages={549--564},
-	year={2002},
-	organization={Springer}
-}
-
-
-
-@article{eiter1995identifying,
-	title={Identifying the minimal transversals of a hypergraph and related problems},
-	author={Eiter, Thomas and Gottlob, Georg},
-	journal={SIAM Journal on Computing},
-	volume={24},
-	number={6},
-	pages={1278--1304},
-	year={1995},
-	publisher={SIAM}
-}
-
-@book{eiter1991transveral,
-	title={On transveral hypergraph computation and deciding hypergraph saturation},
-	author={Eiter, Thomas},
-	year={1991},
-	publisher={na}
-}
-
-
-@article{reiter1987theory,
-	title={A theory of diagnosis from first principles},
-	author={Reiter, Raymond},
-	journal={Artificial intelligence},
-	volume={32},
-	number={1},
-	pages={57--95},
-	year={1987},
-	publisher={Elsevier}
-}
-
-@article{de1987diagnosing,
-	title={Diagnosing multiple faults},
-	author={De Kleer, Johan and Williams, Brian C},
-	journal={Artificial intelligence},
-	volume={32},
-	number={1},
-	pages={97--130},
-	year={1987},
-	publisher={Elsevier}
-}
-
-
-@article{dong2005mining,
-  title={Mining border descriptions of emerging patterns from dataset pairs},
-  author={Dong, Guozhu and Li, Jinyan},
-  journal={Knowledge and Information Systems},
-  volume={8},
-  number={2},
-  pages={178--202},
-  year={2005},
-  publisher={Springer}
-}
-
-
-@article{murakami2014efficient,
-  title={Efficient algorithms for dualizing large-scale hypergraphs},
-  author={Murakami, Keisuke and Uno, Takeaki},
-  journal={Discrete Applied Mathematics},
-  volume={170},
-  pages={83--94},
-  year={2014},
+@article{MPICH,
+  title={{A high-performance, portable implementation of the MPI message passing interface standard}},
+  author={Gropp, William and Lusk, Ewing and Doss, Nathan and Skjellum, Anthony},
+  journal={Parallel computing},
+  volume={22},
+  number={6},
+  pages={789--828},
+  year={1996},
   publisher={Elsevier}
 }
 
-@article{hebert2007data,
-  title={A data mining formalization to improve hypergraph minimal transversal computation},
-  author={H{\'e}bert, C{\'e}line and Bretto, Alain and Cr{\'e}milleux, Bruno},
-  journal={Fundamenta Informaticae},
-  volume={80},
-  number={4},
-  pages={415--433},
-  year={2007},
-  publisher={IOS Press}
+@article{mpiP,
+  title={{mpiP: Lightweight, scalable mpi profiling}},
+  author={Vetter, Jeffrey and Chambreau, Chris},
+  note={\url{http://mpip.sourceforge.net}},
+  year={2005}
 }
+
+@misc{TACC,
+  title={{TACC Stampede cluster}},
+  note={The University of Texas at Austin: \url{http://www.tacc.utexas.edu}},
+}
+
+@misc{BEACON,
+  title={{Argo: An Exascale Operating System and Runtime}},
+  author={Perarnau, Swann and Gupta, Rinku and Beckman, Pete and others},
+  booktitle={The International Conference for High Performance Computing, Networking, Storage and Analysis (SC)},
+  year={2015},
+  note={\url{http://sc15.supercomputing.org/sites/all/themes/SC15images/tech_poster/poster_files/post298s2-file2.pdf}},
+}
+  
+
+@inproceedings{SHARP,
+  title={{Scalable hierarchical aggregation protocol (SHArP): a hardware architecture for efficient data reduction}},
+  author={Graham, Richard L and Bureddy, Devendar and Lui, Pak and Rosenstock, Hal and Shainer, Gilad and Bloch, Gil and Goldenerg, Dror and Dubman, Mike and Kotchubievsky, Sasha and Koushnir, Vladimir and others},
+  booktitle={Proceedings of the First Workshop on Optimization of Communication in HPC},
+  pages={1--10},
+  year={2016},
+  organization={IEEE Press}
+}
+
+@incollection{Vampir,
+  title={{The vampir performance analysis tool-set}},
+  author={Kn{\"u}pfer, Andreas and Brunst, Holger and Doleschal, Jens and Jurenz, Matthias and Lieber, Matthias and Mickler, Holger and M{\"u}ller, Matthias S and Nagel, Wolfgang E},
+  note={\url{www.vampir.eu}},
+  booktitle={Tools for High Performance Computing},
+  pages={139--155},
+  year={2008},
+  publisher={Springer}
+}
+
+@article{Mantevo,
+  title={{Improving performance via mini-applications}},
+  author={Heroux, Michael A and Doerfler, Douglas W and Crozier, Paul S and Willenbring, James M and Edwards, H Carter and Williams, Alan and Rajan, Mahesh and Keiter, Eric R and Thornquist, Heidi K and Numrich, Robert W},
+  note={\url{https://mantevo.org/}},
+  journal={Sandia National Laboratories, Tech. Rep. SAND2009-5574},
+  volume={3},
+  year={2009}
+}
+
+@article{AmberMD,
+  title={{The Amber biomolecular simulation programs}},
+  author={Case, David A and Cheatham, Thomas E and Darden, Tom and Gohlke, Holger and Luo, Ray and Merz, Kenneth M and Onufriev, Alexey and Simmerling, Carlos and Wang, Bing and Woods, Robert J},
+  note={\url{http://ambermd.org/}},
+  journal={Journal of computational chemistry},
+  volume={26},
+  number={16},
+  pages={1668--1688},
+  year={2005},
+  publisher={Wiley Online Library}
+}
+
+@article{SNAP,
+  title={{SNAP: SN (discrete ordinates) application proxy: Description}},
+  author={Zerr, Robert J and Baker, Randal S},
+  journal={Los Alamos National Laboratories, Tech. Rep. LAUR-13-21070},
+  note={\url{https://github.com/lanl/SNAP/}},
+  year={2013}
+}
+
+@article{PARTISN,
+  title={{PARTISN: A time-dependent, parallel neutral particle transport code system}},
+  author={Alcouffe, Ray E and Baker, Randal S and Dahl, Jon A and Turner, Scott A and Ward, Robert},
+  journal={Los Alamos National Laboratory, LA-UR-05-3925 (May 2005)},
+  year={2005}
+}
+
+@misc{Sweep3D,
+  title={{Los Alamos, and Sandia National Laboratories. The accelerated strategic computing initiative (ASCI) sweep3d benchmark code, 1995}},
+  author={Livermore, Lawrence}
+}
+
+@inproceedings{keller06,
+  author =       {Rainer Keller and George Bosilca and Graham Fagg and Michael Resch and Jack J.~Dongarra},
+  title =        {{Implementation and Usage of the PERUSE-Interface in Open MPI}},
+  booktitle =    {Proceedings, 13th European PVM/MPI Users' Group Meeting},
+  address =      {Bonn, Germany},
+  publisher =    {Springer-Verlag},
+  series =       {Lecture Notes in Computer Science},
+  month =        {September},
+  year =         {2006},
+} 
+
+@inproceedings{Islam:2014:ECN:2642769.2642781,
+ author = {Islam, Tanzima and Mohror, Kathryn and Schulz, Martin},
+ title = {{Exploring the Capabilities of the New MPI\_T Interface}},
+ booktitle = {Proceedings of the 21st European MPI Users' Group Meeting},
+ note={\url{https://computation.llnl.gov/projects/mpi_t/gyan}},
+ series = {EuroMPI/ASIA '14},
+ year = {2014},
+ isbn = {978-1-4503-2875-3},
+ location = {Kyoto, Japan},
+ pages = {91:91--91:96},
+ articleno = {91},
+ numpages = {6},
+ doi = {10.1145/2642769.2642781},
+ acmid = {2642781},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+}
+
+@inproceedings{Gallardo:2015:MAM:2802658.2802667,
+ author = {Gallardo, Esthela and Vienne, Jerome and Fialho, Leonardo and Teller, Patricia and Browne, James},
+ title = {{MPI Advisor: A Minimal Overhead Tool for MPI Library Performance Tuning}},
+ booktitle = {Proceedings of the 22Nd European MPI Users' Group Meeting},
+ series = {EuroMPI '15},
+ year = {2015},
+ isbn = {978-1-4503-3795-3},
+ location = {Bordeaux, France},
+ pages = {6:1--6:10},
+ articleno = {6},
+ numpages = {10},
+ doi = {10.1145/2802658.2802667},
+ acmid = {2802667},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {HPC, MPI, Performance tool, performance optimization},
+}
+
+@article{doi:10.1177/1094342016684005,
+author = {Esthela Gallardo and Jérôme Vienne and Leonardo Fialho and Patricia Teller and James Browne},
+title = {{Employing MPI\_T in MPI Advisor to optimize application performance}},
+journal = {The International Journal of High Performance Computing Applications},
+volume = {0},
+number = {0},
+pages = {1094342016684005},
+year = {0},
+doi = {10.1177/1094342016684005},
+
+    abstract = { MPI\_T, the MPI Tool Information Interface, was introduced in the MPI 3.0 standard with the aim of enabling the development of more effective tools to support the Message Passing Interface (MPI), a standardized and portable message-passing system that is widely used in parallel programs. Most MPI optimization tools do not yet employ MPI\_T and only describe the interactions between an application and an MPI library, thus requiring that users have expert knowledge to translate this information into optimizations. In contrast, MPI Advisor, a recently developed, easy-to-use methodology and tool for MPI performance optimization, pioneered the use of information provided by MPI\_T to characterize the communication behaviors of an application and identify an MPI configuration that may enhance application performance. In addition to enabling the recommendation of performance optimizations, MPI\_T has the potential to enable automatic runtime application of these optimizations. Optimization of MPI configurations is important because: (1) the vast majority of parallel applications executed on high-performance computing clusters use MPI for communication among processes, (2) most users execute their programs using the cluster’s default MPI configuration, and (3) while default configurations may give adequate performance, it is well known that optimizing the MPI runtime environment can significantly improve application performance, in particular, when the way in which the application is executed and/or the application’s input changes. This paper provides an overview of MPI\_T, describes how it can be used to develop more effective MPI optimization tools, and demonstrates its use within an extended version of MPI Advisor. In doing the latter, it presents several MPI configuration choices that can significantly impact performance, shows how use of information collected at runtime with MPI\_T and PMPI can be used to enhance performance, and presents MPI Advisor case studies of these configuration optimizations with performance gains of up to 40\%. }
+}
+
+@Inbook{Chaarawi2008,
+author="Chaarawi, Mohamad
+and Squyres, Jeffrey M.
+and Gabriel, Edgar
+and Feki, Saber",
+editor="Lastovetsky, Alexey
+and Kechadi, Tahar
+and Dongarra, Jack",
+title="A Tool for Optimizing Runtime Parameters of Open MPI",
+bookTitle="Recent Advances in Parallel Virtual Machine and Message Passing Interface: 15th European PVM/MPI Users' Group Meeting, Dublin, Ireland, September 7-10, 2008. Proceedings",
+note={\url{https://www.open-mpi.org/projects/otpo/}},
+year="2008",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="210--217",
+isbn="978-3-540-87475-1",
+doi="10.1007/978-3-540-87475-1_30",
+}
+
+
+@inproceedings{Pellegrini:2010:ATM:1787275.1787310,
+ author = {Pellegrini, Simone and Fahringer, Thomas and Jordan, Herbert and Moritsch, Hans},
+ title = {{Automatic Tuning of MPI Runtime Parameter Settings by Using Machine Learning}},
+ booktitle = {Proceedings of the 7th ACM International Conference on Computing Frontiers},
+ series = {CF '10},
+ year = {2010},
+ isbn = {978-1-4503-0044-5},
+ location = {Bertinoro, Italy},
+ pages = {115--116},
+ numpages = {2},
+ doi = {10.1145/1787275.1787310},
+ acmid = {1787310},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {machine learning, mpi runtime parameters, tuning},
+}
+
+@article{Gerndt:2010:APA:1753228.1753232,
+ author = {Gerndt, M. and Ott, M.},
+ title = {{Automatic Performance Analysis with Periscope}},
+ note = {\url{http://periscope.in.tum.de/}},
+ journal = {Concurr. Comput. : Pract. Exper.},
+ issue_date = {April 2010},
+ volume = {22},
+ number = {6},
+ month = apr,
+ year = {2010},
+ issn = {1532-0626},
+ pages = {736--748},
+ numpages = {13},
+ doi = {10.1002/cpe.v22:6},
+ acmid = {1753232},
+ publisher = {John Wiley and Sons Ltd.},
+ address = {Chichester, UK},
+ keywords = {MPI profiling, Periscope, performance analysis},
+}
+
+@inproceedings{Sikora:2016:AMA:2916026.2916028,
+ author = {Sikora, Anna and C{\'e}sar, Eduardo and Compr{\'e}s, Isa\'{\i}as and Gerndt, Michael},
+ title = {{Autotuning of MPI Applications Using PTF}},
+ booktitle = {Proceedings of the ACM Workshop on Software Engineering Methods for Parallel and High Performance Applications},
+ series = {SEM4HPC '16},
+ year = {2016},
+ isbn = {978-1-4503-4351-0},
+ location = {Kyoto, Japan},
+ pages = {31--38},
+ numpages = {8},
+ doi = {10.1145/2916026.2916028},
+ acmid = {2916028},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {autotuning, mpi, ptf, runtime parameters},
+}
+
+
+@inproceedings{Huck:2013:EPA:2491661.2481434,
+ author = {Huck, Kevin and Shende, Sameer and Malony, Allen and Kaiser, Hartmut and Porterfield, Allan and Fowler, Rob and Brightwell, Ron},
+ title = {{An Early Prototype of an Autonomic Performance Environment for Exascale}},
+ note = {\url{http://khuck.github.io/xpress-apex/}},
+ booktitle = {Proceedings of the 3rd International Workshop on Runtime and Operating Systems for Supercomputers},
+ series = {ROSS '13},
+ year = {2013},
+ isbn = {978-1-4503-2146-4},
+ location = {Eugene, Oregon},
+ pages = {8:1--8:8},
+ articleno = {8},
+ numpages = {8},
+ doi = {10.1145/2491661.2481434},
+ acmid = {2481434},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+}
+
+@inproceedings{Rajachandrasekar:2014:UMM:2642769.2642782,
+ author = {Rajachandrasekar, Raghunath and Perkins, Jonathan and Hamidouche, Khaled and Arnold, Mark and Panda, Dhabaleswar K.(DK)},
+ title = {{Understanding the Memory-Utilization of MPI Libraries: Challenges and Designs in Implementing the MPI\_T Interface}},
+ booktitle = {Proceedings of the 21st European MPI Users' Group Meeting},
+ series = {EuroMPI/ASIA '14},
+ year = {2014},
+ isbn = {978-1-4503-2875-3},
+ location = {Kyoto, Japan},
+ pages = {97:97--97:102},
+ articleno = {97},
+ numpages = {6},
+ doi = {10.1145/2642769.2642782},
+ acmid = {2642782},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {MPI-3.0, MPI_T, MVAPICH, memory-utilization, profiling, tools},
+} 
+
+@article{Shende:2006:TPP:1125980.1125982,
+ author = {Shende, Sameer S. and Malony, Allen D.},
+ title = {{The {TAU} Parallel Performance System}},
+ note = {\url{http://tau.uoregon.edu}},
+ journal = {Int. J. High Perform. Comput. Appl.},
+ issue_date = {May       2006},
+ volume = {20},
+ number = {2},
+ month = may,
+ year = {2006},
+ issn = {1094-3420},
+ pages = {287--311},
+ numpages = {25},
+ doi = {10.1177/1094342006064482},
+ acmid = {1125982},
+ publisher = {Sage Publications, Inc.},
+ address = {Thousand Oaks, CA, USA},
+ keywords = {Performance evaluation, TAU, analysis, instrumentation, measurement},
+} 
+
+@inproceedings{Perarnau:2015:DMM:2960986.2961000,
+ author = {Perarnau, Swann and Thakur, Rajeev and Iskra, Kamil and Raffenetti, Ken and Cappello, Franck and Gupta, Rinku and Beckman, Pete and Snir, Marc and Hoffmann, Henry and Schulz, Martin and Rountree, Barry},
+ title = {{Distributed Monitoring and Management of Exascale Systems in the Argo Project}},
+ booktitle = {Proceedings of the 15th IFIP WG 6.1 International Conference on Distributed Applications and Interoperable Systems - Volume 9038},
+ year = {2015},
+ isbn = {978-3-319-19128-7},
+ pages = {173--178},
+ numpages = {6},
+ doi = {10.1007/978-3-319-19129-4_14},
+ acmid = {2961000},
+ publisher = {Springer-Verlag New York, Inc.},
+ address = {New York, NY, USA},
+}
+
+@inproceedings{Eisenhauer:2009:ESO:1619258.1619261,
+ author = {Eisenhauer, Greg and Wolf, Matthew and Abbasi, Hasan and Schwan, Karsten},
+ title = {{Event-based Systems: Opportunities and Challenges at Exascale}},
+ booktitle = {Proceedings of the Third ACM International Conference on Distributed Event-Based Systems},
+ series = {DEBS '09},
+ year = {2009},
+ isbn = {978-1-60558-665-6},
+ location = {Nashville, Tennessee},
+ pages = {2:1--2:10},
+ articleno = {2},
+ numpages = {10},
+ doi = {10.1145/1619258.1619261},
+ acmid = {1619261},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {communication, events, high-performance, middleware, overlay},
+}
+
+@inproceedings{pjn2008,
+author = {P\'erache, Marc and Jourdren, Herv\'e and Namyst, Raymond},
+title = {{MPC: A Unified Parallel Runtime for Clusters of NUMA Machines}},
+booktitle = {Proceedings of the 14th International Euro-Par Conference on Parallel Processing},
+series = {Euro-Par ’08},
+year = {2008},
+isbn = {978-3-540-85450-0},
+location = {Las Palmas de Gran Canaria, Spain},
+pages = {78–88},
+numpages = {11},
+doi = {10.1007/978-3-540-85451-7_9},
+acmid = {1429633},
+publisher = {Springer-Verlag},
+address = {Berlin, Heidelberg},
+}
+
+@ARTICLE{bowman:reasoning,
+    author = {Bowman, Mic and Debray, Saumya K. and Peterson, Larry L.},
+    title = {{Reasoning About Naming Systems}},
+    journal = {ACM Trans. Program. Lang. Syst.},
+    volume = {15},
+    number = {5},
+    pages = {795-825},
+    month = {November},
+    year = {1993},
+    doi = {10.1145/161468.161471},
+}
+
+
+@BOOK{Lamport:LaTeX,
+	AUTHOR = "Leslie Lamport",
+	TITLE = "LaTeX User's Guide and Document Reference Manual",
+	PUBLISHER = "Addison-Wesley Publishing Company",
+	ADDRESS = "Reading, Massachusetts",
+	YEAR = "1986"	}
+
+@BOOK{salas:calculus,
+	AUTHOR = "S.L. Salas and Einar Hille",
+	TITLE = "Calculus: One and Several Variable",
+	PUBLISHER = "John Wiley and Sons",
+	ADDRESS = "New York",
+	YEAR = "1978"	}
+
+@MANUAL{Fear05,
+  title = 	 {Publication quality tables in {\LaTeX}},
+  author =	 {Simon Fear},
+  month =	 {April},
+  year =	 2005,
+  note =	 {\url{http://www.ctan.org/pkg/booktabs}}
+}
+
+@Manual{Amsthm15,
+  title = 	 {Using the amsthm Package},
+  organization = {American Mathematical Society},
+  month =	 {April},
+  year =	 2015,
+  note =	 {\url{http://www.ctan.org/pkg/amsthm}}
+}
+
+@inproceedings{PDT,
+  title={A tool framework for static and dynamic analysis of object-oriented software with templates},
+  author={Lindlan, Kathleen A and Cuny, Janice and Malony, Allen D and Shende, Sameer and Mohr, Bernd and Rivenburgh, Reid and Rasmussen, Craig},
+  booktitle={Supercomputing, ACM/IEEE 2000 Conference},
+  pages={49--49},
+  year={2000},
+  organization={IEEE}
+}
+
