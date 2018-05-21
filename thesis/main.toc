@@ -50,4 +50,15 @@
 \contentsline {chapter}{\numberline {VII}\uppercase {Discussion and Future Work}}{44}
 \contentsline {section}{ Discussion}{44}
 \contentsline {section}{ Conclusion and Future Work}{45}
-\contentsline {chapter}{REFERENCES CITED}{47}
+\contentsline {chapter}{\numberline {VIII}\uppercase {CALIPER - MPI\_T}}{47}
+\contentsline {section}{ Introduction}{47}
+\contentsline {section}{ Creating a performance session}{48}
+\contentsline {section}{ PVAR handle allocation}{48}
+\contentsline {section}{ PVAR classes and notion of aggregability}{50}
+\contentsline {section}{ Creating Caliper attributes for PVARs}{52}
+\contentsline {section}{ Querying and storing PVARs}{53}
+\contentsline {section}{ Challenges in implementing MPI\_T in Caliper}{54}
+\contentsline {section}{ Experiments}{54}
+\contentsline {chapter}{\numberline {IX}\uppercase {Integrating TAU and CALIPER}}{55}
+\contentsline {chapter}{\numberline {X}\uppercase {Comparing the MPI\_T implementations in TAU and CALIPER}}{56}
+\contentsline {chapter}{REFERENCES CITED}{57}
