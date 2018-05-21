@@ -1,0 +1,52 @@
+\chapter{Branch and Bound}
+
+The ``branch and bound'' solution reduces the number of iterated transversals by considering the results of \ri{IsMinimalTransversal}. If the odometer is not yet a minimal transversal, add another index. Otherwise, the odometer is or contains a minimal transversal. If possible,  increment the top index. Otherwise, the top index needs to be removed and the next index needs to be incremented.
+
+\begin{algorithm}[H]
+    \centering
+	\caption{TransversalsByBranchAndBound}\label{TransversalsByBranchAndBound}
+	\begin{algorithmic}[1]
+		\Function{$TransversalsByBranchAndBound(H,CallbackFunc)$}{}
+		\State $count \gets H.E.size()$
+		\State $o \gets \emptyset$
+		\State $o.push(0)$
+		\While {$o.size() > 0$} {}
+		
+		\Switch {$IsMinimalTransversal(o,H.E)$}
+		\Case $0$
+		\State $CallbackFunc(o,OtoE(H,o))$  \Comment{Fall through to next case}
+		\EndCase
+		\Case $1$
+		\If {$o[o.size()-1] < count -1$}
+		\State $o[o.size()-1] \gets o[o.size()-1] +1$
+		\Else
+		\State $o.pop()$
+		\If {$o.size() > 0$}
+		\State $o[o.size()-1] \gets o[o.size()-1] +1 $
+		\EndIf
+		\EndIf
+		\State $break$
+		\EndCase
+		\Case $-1$
+		\State $next \gets o[o.size()-1] + 1$
+		\If {$next < count$}
+		\State $o.push(next)$
+		\Else
+		\State $o.pop()$
+		\If {$o.size() > 0$}
+		\State $o[o.size()-1] \gets o[o.size()-1] +1 $
+		\EndIf
+		\EndIf
+		\State $break$
+		\EndCase
+		\EndSwitch
+		
+		\EndWhile
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+The \ri{TransversalsByBranchAndBound} is an augmented form of \ri{GenerateCombinationCounters} combined with \ri{IncrementCombinationCounter}. The control stack is manipulated based on the results of \ri{IsMinimalTransversal}. If the currently generated combination odometer is not a hitting odometer, then another node needs to be added, and the control counter is incremented. 
+If the odometer is a minimal hitting set, then invoke the callback function and deliver the minimal transversal. If the odometer hits at all, then remove the current node and the add next node if possible. 
+
+The performance of this algorithm on broad shallow exploration trees is exceptional for certain cases, outperforming $ \le O(N)$. On hard data sets with deep search trees the performance breaks as expected $O(2^N)$. Theoretically the compact routine sits entirely in the processor cache as noted by the performance on the random hypergraph test. The \ri{TransversalsByBranchAndBound} is a simplification of the MTminor algorithm, which traverses both negative and positive search spaces simultaneously. ~\cite{hebert2007data} ~\cite{dong2005mining}

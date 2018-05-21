@@ -1,0 +1,125 @@
+\chapter{Optimization}
+
+Chapter \ref{chapter:dynamic} implements the core algorithms to iteratively generate successive solution representations. Each representation is updated as it encounters each new hyperedge. There are different trade offs and potential optimizations with respect to time and space that will be discussed. However, the authors assume that there are a class of problems where the additional changes will not be possible.  The additional optimizations exploit the representation that has been built and paid for with time in \ri{CondenseMinimalTransversals}. One example is the usage of \ri{DoesAHitAll} in \ri{ProcessNewCMT} to eliminate an exponential sub-step by leveraging the representation. Further polynomial constant exchanges are made for performance enhancements in NC-DO0, NC-DO1, NC-DO3. The only true optimization is NC-DO3: if the program is able to output the \emph{representation} of the solution, instead of the solution.
+
+
+\section{NC-DO0}
+\ri{ProcessNewCMT} enumerates each of the transversals trying to eliminate the new potential transversal using the previous list of $CMT$. Calling \ri{CondenseMinimalTransversals} on the complete list of $CMT$ for all child transversals is expensive in time. Removal of any transversal in a $CMT$ will require a list of $CMT$ to represent the newly reduced transversals. \ri{ProcessNewCMT0} maintains a local list of $CMT$ that are dynamically updated as they encounter each of the previous $CMT$. \ri{MergeCMTLists} and \ri{RemoveHittingTransversals} are now added to the solution. \ri{ProcessNewCMT0} replaces \ri{ProcessNewCMT}. \ri{MergeCMTLists} condenses two lists of $CMT$ into one list of $CMT$. 
+
+\begin{algorithm}[H]
+    \centering
+	\caption{MergeCMTLists}
+	\label{MergeCMTLists}
+	\begin{algorithmic}[1]
+		\Function{$MergeCMTLists(list\_of\_CMT_0,list\_of\_CMT_1)$}{}
+		\ForAll {$\{cmt_1,i\} \in list\_of\_CMT_1$}
+		\State $CondenseMinimalTransversals(list\_of\_CMT\_0,cmt_1)$
+		\EndFor
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+ \ri{RemoveHittingTransversals} simply enumerates transversals from a $CMT$ and removes transversals that hit a previous $CMT$. Now the list of transversals is dynamically updated until previous $CMT$ have been considered. 
+\begin{algorithm}[H]
+    \centering
+	\caption{RemoveHittingTransversals}
+	\label{RemoveHittingTransversals}
+	\begin{algorithmic}[1]
+		\Function{$RemoveHittingTransversals(new\_CMT,old\_CMT)$}{}
+		\State $results \gets \emptyset$
+		\State $sizes \gets \emptyset, indices \gets \emptyset$
+		\State $GenerateCombinationCounters(new\_CMT,sizes,indices)$
+		\State $intersect = Unionize(new\_CMT)$
+		\State $tester = IntersectCMTwithOdometer(old\_CMT,intersect)$
+		\State $done = false$
+		\While{$!done$}
+		\State $tr \gets \emptyset, cmt \gets \emptyset$
+		\ForAll {$\{o_i,i\} \in new\_CMT$}
+		\State $val = o[indices[i]]$
+		\State $t \gets \emptyset$
+		\State $t.push(val)$
+		\State $tr.push(val)$
+		\State $cmt.push(t)$ 
+		\EndFor
+		\State $done \gets IncrementCombinationCounter(indices,sizes)$
+		\State $intersect = Intersection(o_i,o)$
+		\If { $DoesAHitAll(tr,tester) = false$ }
+		\State $CondenseMinimalTransversals(results,cmt)$
+		\EndIf
+		\EndWhile
+		\State \Return $results$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\ri{ProcessNewCMT0} now maintains the dynamic update to the representation of the valid transversals as each previous $CMT$ is considered. If any transversal gets invalidated, then it is not added to the next update list. 
+\begin{algorithm}[H]
+    \centering
+	\caption{ProcessNewCMT0}
+	\label{ProcessNewCMT0}
+	\begin{algorithmic}[1]
+		\Function{$ProcessNewCMT0(new\_CMT, old\_CMT\_list,new\_CMT\_list,index)$}{}
+		\State $transversals \gets \emptyset$
+		\State $transversals.push(new\_cmt)$
+		\ForAll {$\{old\_cmt,i\} \in old\_CMT\_list$} 
+		\If {$i == index$}
+		\State $continue$
+		\EndIf
+		\State $next\_transversals \gets \emptyset$
+		\ForAll {$\{new\_cmt,j\} \in transversals$}
+		\State $temp = RemoveHittingTransversals(new\_cmt,cmt)$
+		\State $MergeCMTLists(next\_transversals,temp)$
+		\EndFor
+		\State $transversals \gets next\_transversals$
+		\EndFor
+		\State $MergeCMTLists(new\_CMT\_list,transversals)$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+The changes in NC-DO0 were iterate a list of transversals over each old $CMT$ and validate that none of them hit the old $CMT$. The previous routine \ri{ProcessNewCMT} iterated each transversal testing it against each $CMT$.
+
+
+\section{NC-DO1}
+\ri{ProcessNewCMT1} now replaces \ri{ProcessNewCMT0}. Enumerating every transversal in the list is not necessary if it is not even possible for the generated transversal to hit the previous $CMT$. Notice that if the intersection either way does not add up to the size of the previous transversal, then it cannot hit any transversal contained in it. 
+
+\begin{algorithm}[H]
+    \centering
+	\caption{ProcessNewCMT1}
+	\label{ProcessNewCMT1}
+	\begin{algorithmic}[1]
+		\Function{$ProcessNewCMT1(new\_CMT, old\_CMT\_list,new\_CMT\_list,index)$}{}
+		\State $transversals \gets \emptyset$
+		\State $transversals.push(new\_cmt)$
+		\ForAll {$\{old\_cmt,i\} \in old\_CMT\_list$} 
+		\If {$i == index$}
+		\State $continue$
+		\EndIf
+		\State $next\_transversals \gets \emptyset$
+		\ForAll {$\{new\_cmt,j\} \in transversals$}
+		\State $IHGnew = IntersectCMTWithEdge(new\_cmt,Unionize(old\_cmt))$
+		\State $IHGold = IntersectCMTWithEdge(old\_cmt,Unionize(new\_cmt))$
+		\State $newsize \gets IHGnew.Betas.size() + IHGnew.Gammas.size() $
+		\State $oldsize \gets IHGold.Betas.size() + IHGold.Gammas.size() $
+		\If {$ newsize \ge oldsize \ge old\_cmt.size()$}
+		\State $temp = RemoveHittingTransversals(new\_cmt,cmt)$
+		\State $MergeCMTLists(next\_transversals,temp)$
+		\Else
+		\State $CondenseMinimalTransversals(next\_transversals,new\_cmt)$
+		\EndIf
+		\EndFor
+		\State $transversals \gets next\_transversals$
+		\EndFor
+		\State $MergeCMTLists(new\_CMT\_list,transversals)$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+Notice that the results of \ri{IntersectCMTWithEdge} are only used for their sizes. A second enhancement in NC-DO2 is covered in the future works section. 
+
+\section{NC-DO3}
+Consider the iterative call in \ri{TransversalsByCMT} to \ri{ExtractTransversals} that extracts all of the transversals in the list of $CMT$ and iterates over them. The Matching hypergraph test data set generates an exponentially large number of solutions. The current data file formats supported by these programs cannot be generated if the number of transversals is large. The transversal of a matching hypergraph with 100 nodes would require some $2^{100}$ lines in the file. The known universe is estimated to contain between $2^{80}$ and $2^{100}$ atoms. It is a safe assumption that the current file format will be incapable of representing such a solution. On the other hand, the list of $CMT$ containing the $2^{100}$ solutions can be directly written to disk without enumerating the solution. 
+
+If and only if the encoded representation of the solution is acceptable, then the results of NC-DO3 are applicable. The only optimization in NC-DO3 over NC-D01 is writing the list of $CMT$ directly to file instead of writing the interpretation of them to file. This change requires a different call-back function in \ri{TransversalsByCMT} that accepts $CMT$ directly.
+
+

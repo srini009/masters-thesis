@@ -1,0 +1,46 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Hypergraph Transversal Problem}
+The hypergraph transversal problem is the restating of NP-Complete problem in terms of hypergraphs, hyperedges, and their transversals. A simple graph version of this problem is: ``Find all possible ways to split Facebook into two groups, such that the first group is friends with everyone in the second group.''. Consider a complex question: ``Given a set of chemical reactions, find all sets of chemicals, such that at least one chemical from all the reactions is present''.
+
+\section{Transversal of a Hypergraph}
+Let the transversal of a hypergraph $Tr(H)$ be an odometer that contains at least one vertex from every hyperedge in the hypergraph. Notice that this has the property \ri{DoesAHitAll} where $A$ is the transversal and $list\_of\_o$ is the list of hyperedges from the hypergraph. 
+
+\section{\emph{Minimal} Transversal of a Hypergraph}
+Let the minimal transversal of a hypergraph be a transversal such that the removal of any vertex from the transversal would invalidate the transversal property. \ri{DoesAHitAll} only validates the transversal property. \ri{IsMinimalHittingOdometer} determines the minimal transversal property, where $A$ is the minimal transversal, and $list\_of\_o$ is the list of hyperedges from the hypergraph. The result is extended to $\{-1,0,+1\}$ where $-1$ means that the transversal needs additional vertices, $0$ means the transversal is minimal, and $+1$ means that there is a minimal transversal that is contained inside of this transversal. 
+
+\begin{algorithm}[H]
+    \centering
+	\caption{IsMinimalTransversal}\label{IsMinimalTransversal}
+	\begin{algorithmic}[1]
+		\Function{IsMinimalTransversal($O,list\_of\_o$)}{}
+		\If {$DoesAHitAll(O,list\_of\_o)=false$}
+		\State \Return $-1$
+		\EndIf
+		\ForAll {$\{o,i\} \in O$}
+		\State $test \gets GenerateOdometerMinusIndex(O,i)$
+		\If {$DoesAHitAll(test,list\_of\_o)$}
+		\State \Return $1$
+		\EndIf
+		\EndFor
+		\State \Return $0$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}

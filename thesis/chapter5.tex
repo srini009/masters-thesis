@@ -1,0 +1,47 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Naive solution}
+
+The \ri{TransversalsByNaive} function enumerates all potential transversals of a hypergraph using a single odometer. The control routine increments the index values in the odometer properly to generate all combinations of indexes. Each odometer combination is tested to see if it is a minimal transversal. Notice that this is an exhaustive search that does not consider the results of \ri{IsMinimalTransversal}. The results of this function were used to validate the other routines. As the number of nodes in the hypergraph grows, this function grows exponentially in time. 
+
+\begin{algorithm}[H]
+    \centering
+	\caption{TransversalsByNaive}\label{TransversalsByNaive}
+	\begin{algorithmic}[1]
+		\Function{$NaiveAllPotentialTransversals(H,CallbackFunc)$}{}
+		\State $count \gets H.E.size()$
+		\State $o \gets \emptyset$ \Comment{odometer}
+		\State $o.push(0)$
+		\While {$o.size() > 0$} {}
+		\If {$IsMinimalTransversal(o,H.E) = 0 $}
+		\State $CallbackFunc(o,OtoE(H,o))$
+		\EndIf
+		\State $next \gets o[o.size()-1] + 1$ 
+		\If {$next < count$}
+		\State $o.push(next)$
+		\Else
+		\State $o.pop()$
+		\If {$o.size() > 0$}
+		\State $o[o.size()-1] \gets o[o.size()-1] +1 $
+		\EndIf
+		\EndIf
+		\EndWhile
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}

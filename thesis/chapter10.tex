@@ -1,0 +1,55 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Conclusions and Future Directions}
+
+This paper has now demonstrated a dynamic polynomial-space, exponential-time (NC-D) iterative solution to the hypergraph transversal problem. The mechanics of \ri{IntersectCMTWithEdge} and \ri{ProcessNewCMT} were originally described in a recursive solution \cite{khachiyan2006efficient}. Similar to the previous recursive solution, all of the $2^{|Gamma|}$ cross-product children need to be enumerated and each child still needs to inspect the previous set of transversals to determine if it is $appropriate$ to add it as a new transversal.
+
+\section{Improvements Over Previous Solutions}
+Improvements over previous solutions were in several areas. Odometers replaced both the set and bit vector representation in the KS implementation. Odometers are used to represent hyperedges, indices, generalized variables, transversals and as exponential enumeration variable counters. Lists of odometers represented compact minimal transversals and the processing of odometers in functions. Lists of lists of odometers represented the entire solution to a exponential problem where the polynomial number of polynomial encodings contains exactly all of the solutions. Each $CMT$ takes exponential time to enumerate all of its transversals. The efficient storage is of particular interest as \ri{ProcessNewCMT} shortcuts an exponential number of comparisons by leveraging \ri{DoesAHitAll} to determine if a child is $appropriate$ to add to the next generation of $CMT$s. 
+
+Both versions must consider the previous transversals minus its parent, but the recursive version did not have a mechanism to store the previous list of transversals. The algorithm had to generate each one by using recursion and a complex call stack to store the states. Consider the recursive solution that enumerates each of the previous transversals without storing them. This leads to exponential time to recompute previous transversals and memory use grows proportionally to the number of hyperedges.
+
+
+\section{Parallelization}
+
+There are multiple components of the NC-D algorithm that can be distributed for performance gains that scale to the number of computation units available. Consider that, like all dynamic algorithms, the next set of solutions must be computed from the current set of solutions. A three-staged pipeline could maximize the throughput of available compute nodes for this algorithm. 
+
+The first parallel stage is that each $CMT$ has $2^{|Gamma|}$ potential children and each one can be computed given a hyperedge, in fact every $CMT$ can generate all of its potential children $CMT$'s independently. Consider $N$ compute nodes each working with a specific $CMT$ and hyperedge to fill a pipeline of children $CMT$s work items. 
+
+
+The transversal generation, testing, and compaction can happen in parallel in multiple places. The generation of each transversal from each $CMT$ can be done independently. The testing of each new potential $CMT$ against the previous $CMT$ can be done independently. The condensing of the transversals into the next list of $CMT$ can be done in parallel with memory locking mechanisms.
+
+\section{NC-DO2 Optimization}
+
+A further optimization on \ri{ProcessNewCMT1} is to replace the call to \ri{RemoveHittingTransversals} with a call to a new optimized version. Enumeration of all transversals of a $CMT$ is not necessary. Enumeration of only the transversals that hit is required.  This can be calculated and directly enumerated using the previous exponential extraction of all gamma types. 
+Version NC-DO1 does the preliminary check to see if the enumeration of transversals is even required. This only eliminates the need to enumerate them if it is not possible to hit them. 
+
+The second optimization is to generate only the correct sub-transversals of a $CMT$ that need to be considered. As previously noticed, only the intersections of the current $CMT$ and the \ri{Unionize} of the previous $CMT$ need be considered. Interestingly, the \ri{IntersectCMTWithEdge} function provides the exact segmented results that need to be considered. All the items in the Beta and Gamma lists can be iterated in the same exponential method. An iterator that winds through each generated $CMT$ beta and gamma nodes constructing the sub-transversal that satisfies \ri{DoesAHitAll} needs to discard the generated item. As such, each non-discarded item needs to be collected in a local list of $CMT$ to condense down the exponential non-hitting sets. The implementing of this methodology is left open for future work. 
+
+
+\section{Advanced Algorithm Applications}
+
+The encoded NC-DO3 output can be analyzed without passing the encoding to an exponential decoder. Simple analysis such as deriving the number of transversals a node participates in is polynomial in the encoded output. Further analysis of these encodings can benefit clustering. 
+
+
+The first step to the enumeration of objectively better minimal transversals is first traversing only the minimal traversals in an efficient way~ \cite{boros2003efficient}. A simple example is using the number of transversals a node participates in to identify clusters~ \cite{bailey2003fast}. 
+
+\ri{CondenseMinimalTransversals} is highly inefficient in both time and memory. A tree structure as an intermediate representation instead of $CMT$ can represent the same transversals program using less memory. All new interactions of edges with tree representations will need to be derived in the same manner as the $CMT$. 
