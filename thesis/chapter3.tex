@@ -1,30 +1,163 @@
-\chapter{Background}
-Our work targets the development of an integrated software infrastructure that enables the use of MPI\_T for performance introspection and online tuning. Here we describe the functionality of the key components and present the applications we used in our study.
-\subsection{TAU Performance System$^{\textregistered}$}
-TAU~\cite{Shende:2006:TPP:1125980.1125982} is a comprehensive performance analysis toolkit that offers capabilities to instrument and measure scalable parallel applications on a variety of HPC architecture.
-TAU supports standard programming models including MPI and OpenMP. It can profile and trace MPI applications through the PMPI interface either by linking in the TAU library or through library interposition.
-TAU includes a tool for parallel profile analysis (ParaProf), performance data mining (PerfExplorer), and performance experiment management (TAUdb).
-\subsection{MVAPICH2}
-MVAPICH2~\cite{MVAPICH2} is a cutting-edge open source MPI implementation for high-end computing systems that is based on the MPI 3.1 standard. MVAPICH2 currently supports InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE networking technologies. It offers the user a number of tunable environment parameters and has GPU and MIC optimized versions available.
-\subsection{BEACON}
-BEACON (Backplane for Event and Control Notification)~\cite{BEACON} is a communication infrastructure, originally part of the Argo project~\cite{Perarnau:2015:DMM:2960986.2961000}.
-BEACON provides interfaces for sharing event information in a distributed manner, through nodes and enclaves - a group of nodes.
-It relies on a Publish/Subscribe paradigm, and encompasses backplane end-points (called BEEPs) which are in charge of detecting and generating information to be propagated throughout the system.
-Other BEEPs subscribe to this information and can generate appropriate actions.  
-Events are exchanged between publishers and subscribers through user-defined topics. Examples of such topics are power, memory footprint and CPU frequency.
-These interfaces allow BEACON to be called and used by external components such as performance tools for exchanging information.
-BEACON also includes a modular GUI named PYCOOLR that provides support for dynamic observation of intercepted events. PYCOOLR subscribes to these events by using the BEACON API and is able to display their content during application runtime. Through the GUI, the user can select at runtime the events that represent the performance metrics he wants to observe, and the GUI plots the selected events on the fly.
+\chapter{Design of MPI\_T support in TAU}
+The existence of MPI\_T provides an opportunity to link together the components above. However, each component must be extended to interact through the MPI\_T interface, as well as in concert with each other. Below, we describe the design approach for MVAPICH2 and TAU integration to enable runtime introspection, performance tuning, and recommendation generation. Figure \ref{fig:mpitinfrastructure} depicts the infrastructure architecture and component interactions.
+\section {Enhancing MPI\_T Support in MVAPICH2}
+MVAPICH2 exports a wide range of performance and control variables \\ through the MPI\_T interface. A performance variable represents an internal metric or counter, and setting a control variable may alter the behavior of the library. Current support for MPI\_T variables in MVAPICH2 broadly fall under the following categories:
+\subsection {Monitoring and Modifying Collective Algorithms} 
+For collective operations such as \verb+MPI_Bcast+ and \verb+MPI_Allreduce+, there are a variety of algorithms available and the right algorithm to use depends on a number of parameters such as system metrics (bandwidth, latency), the number of processes communicating and the message size. MVAPICH2 exports CVARs that can be used to determine the collective algorithm based on the message size. It also supports PVARs that monitor the number of times a certain collective algorithm is invoked.
+\begin{center}
+	\begin{figure*}[tbp!]
+         \centering
+		%\includegraphics[width=\textwidth,scale=0.05]{figures/MPI_T_infrastructure}
+		\includegraphics[scale=0.3, width=\columnwidth, keepaspectratio]{figures/MPI_T_infrastructure}
+		\caption{Integrated MVAPICH2 and TAU infrastructure based on MPI\_T}
+		\label{fig:mpitinfrastructure}
+	\end{figure*}
+\end{center}
 
-\subsection{Target Applications}
-  \subsubsection{AmberMD}
+\subsection {Monitoring and Controlling Usage of Virtual Buffers} 
+Virtual Buffers (VBUFs) are used in MVAPICH2 to temporarily store messages in transit between two processes. The use of virtual buffers can offer significant performance improvement to applications performing heavy point-to-point communication, such as stencil-based codes. MVAPICH2 offers a number of PVARs that monitor the current usage level, availability of free VBUFs in different VBUF pools, maximum usage levels, and the number of allocated VBUFs at process level granularity. Accordingly, it exposes CVARs that modify how MVAPICH2 allocates and frees these VBUFs at runtime.
 
-  AmberMD~\cite{AmberMD} is a popular software package that consists of tools to carry out molecular dynamics simulations. A core component is the molecular dynamics engine, \verb+pmemd+, which comes in two flavors: serial and an MPI parallel version. We focus on improving the performance of molecular dynamics simulations that use the parallel MPI version of \verb+pmemd+. A substantial portion of the total runtime is attributed to MPI communication routines, and among MPI routines, calls to \verb+MPI_Wait+ dominate in terms of contribution to runtime. However, in terms of number of MPI calls made, \verb+MPI_Isend+ and \verb+MPI_Irecv+ dominate. The use of non-blocking sends and receives explicitly allows the opportunity for a greater communication-computation overlap.
-  \subsubsection{SNAP}
-  SNAP~\cite{SNAP} is a proxy application from the Los Alamos National Laboratory that is designed to mimic the performance characteristics of PARTISN~\cite{PARTISN}. PARTISN is a neutral particle transport application that solves the linear Boltzmann transport equation for determining the number of neutral particles in a multi-dimensional phase space. SNAP is considered to be an updated version of the Sweep3D~\cite{Sweep3D} proxy application and can be executed on hybrid architectures. SNAP heavily relies on point-to-point communication, and the size of messages transferred is a function of the number of spatial cells per MPI process, number of angles per octant, and number of energy groups. \par
-  Specifically, a bulk of the point-to-point communication is implemented as a combination of \verb+MPI_Isend+/\verb+MPI_Waitall+ on the sender side, and \verb+MPI_Recv+ on the receiver side. This explicitly allows the opportunity for communication-computation overlap on the sender side. 
-  \subsubsection{3DStencil}
-  We designed a simple synthetic stencil application that performs non-blocking point-to-point communication in a cartesian grid topology. In between issuing the non-blocking sends and receives and waiting for the communication to complete, the application performs arbitrary computation for a period of time that is roughly equal to the end-to-end time for pure communication alone. The goal is to evaluate the degree of communication-computation overlap. In an ideal scenario of 100\% overlap, the computation would complete at the same time as communication, so that no additional time is spent in waiting for the non-blocking communication requests to complete. For the purposes of this experiment, point-to-point communication involves messages of an arbitrarily high, but fixed size. 
- \subsubsection{MiniAMR}
+\section{Enabling Runtime Instrospection and Online Monitoring}
+MPI\_T makes it possible to inquire about the state of the underlying MPI implementation through the query of performance variables. While it is the prerogative of the MPI implementation what PVARs are published, the tool must be extended to use MPI\_T for access. Similarly, control variables are defined by the MPI implementation but set by the tool using MPI\_T. Below we discuss how this is done in TAU to realize introspection and tuning.
+\subsection{Gathering Performance Data}
+TAU has been extended to support the gathering of performance data exposed through the MPI\_T interface. Each tool that is interested in querying MPI\_T must first register a \textit{performance session} with the interface. This object allows the MPI library to store separate contexts and differentiate between multiple tools/components that are simultaneously querying the MPI\_T interface. Along with a \textit{performance session}, a tool must also allocate \textit{handles} for all the performance variables that it wishes to read/write. Within TAU, the task of allocating the global (per-process) performance session and handles for PVARs is carried out inside the TAU tool initialization routine. However, this design has a caveat --- an MPI library can export additional PVARs during runtime as they become available through dynamic loading. A tool must accordingly allocate handles for these additional PVARs if it wishes to read them. TAU currently does not support this --- we are restricted to reading PVARs that are exported at TAU initialization. We plan to support the dynamic use case in a future release.
+\par TAU can use sampling to collect performance variables periodically. When an application is profiled with TAU's MPI\_T capabilities enabled, an interrupt is triggered at regular intervals. Inside the signal handler for the \verb+SIGUSR+ signal, the MPI\_T interface is queried and the values of \textit{all} the performance variables exported are stored at process level granularity. TAU registers internal \textit{atomic user events} for each of these performance variables, and every time an event is triggered (while querying the MPI\_T interface), the running average, minimum value, the maximum value, and other basic statistics are calculated and available to the user at the end of the profiling run. These statistics carry meaning only for PVARs that represent \verb+COUNTERS+ or \verb+TIMERS+. Thus, we define TAU user events to store and analyze PVARs for these two classes. The MPI\_T interface allows MPI libraries to export PVARs from a rich variety of classes --- timers, counters, watermarks, state information, etc. MVAPICH2 and TAU have been primarily designed to support PVARs from the \verb+TIMER+ or \verb+COUNTER+ classes. As part of future work, we plan to export a richer variety of PVAR classes and design appropriate methods for storage and analysis of each of these classes.
 
-  MiniAMR is a mini-app that is a part of the Mantevo~\cite{Mantevo} software suite. As the name suggests, it involves adaptive mesh refinement and uses 3D Stencil computation. MiniAMR is a memory bound application, and communication time is dominated by \verb+MPI_Wait+ for point-to-point routines involving small messages (1-2 KB range) and \verb+MPI_Allreduce+. The \verb+MPI_Allreduce+ call involves messages of a constant, small size (8 bytes) making it latency sensitive. This call is part of the check-summing routine and increasing the check-summing frequency or the number of stages per timestep impacts the scalability of this routine and thus the application.
+\subsection{Online Monitoring}
+Runtime introspection naturally extends to online monitoring where certain performance variables are made viewable during execution. Figure \ref{fig:onlinemonitoringdesign} depicts the interaction between TAU and BEACON to enable online monitoring of PVARs through the PYCOOLR GUI.
+\par To interface TAU and BEACON, TAU defines a BEACON \textit{topic} for performance variables and publishes PVAR data collected at runtime to this topic. Any software component interested in monitoring PVARs can then subscribe to this topic and receive live updates for all performance variables exported by the MPI implementation.
+\par To monitor PVARs on PYCOOLR, the PYCOOLR GUI acts as a subscriber to the PVAR topic --- thus it receives updated values for all PVARs from TAU's sampling based measurement module. The GUI has been extended to offer the user the ability to select only those PVARs that he/she is interested in monitoring --- this is a useful feature as an MPI library can export 100's of PVARs, not all of which may interest the user. The GUI plots the values for the selected PVARs at runtime as and when it receives them through BEACON.
 
+\subsection{Viewing Performance Data}
+ParaProf is the TAU component that allows the user to view and analyze the collected performance profile data post-execution. This profile information is collected on a per-thread or a per-process level, depending on whether or not threads were used in the application. ParaProf has existing support for the analysis of \textit{interval events} as well as \textit{atomic user events}. Interval events are used to capture information such as the total execution time spent inside various application routines. Atomic user events are used to store information such as hardware counter values. 
+\par As described in Section 5.2.1, PVARs are treated as atomic user events. ParaProf's existing support for analyzing atomic user events has been leveraged to display PVAR data for each process. Performance variables collected from the MPI\_T interface during execution are displayed on \verb+ParaProf+ as events that include markers indicating high variability.
+
+\begin{center}
+        \begin{figure*}[tbp!]
+        \centering
+                \includegraphics[scale=0.35,keepaspectratio]{figures/Online_Monitoring_Design}
+                \caption{Online Monitoring with BEACON/PYCOOLR}
+                \label{fig:onlinemonitoringdesign}
+        \end{figure*}
+\end{center}
+
+\section{Runtime Tuning through MPI\_T}
+Complementary to providing an API for runtime introspection, the MPI\_T interface also enables a mechanism to modify the behavior of the MPI library through control variables. MPI implementations can define control variables for configuration, performance, or debugging purposes. MPI libraries may implicitly restrict the semantics of \textit{when} CVARs can be set --- some may be set only once before \verb+MPI_Init+, and others may be set anytime during execution. Further, there may be restrictions on whether or not CVARs are allowed to have different values for different processes --- this decision is left entirely up to the MPI library. Therefore, a tool or a user interacting with the MPI\_T interface for the purpose of tuning the MPI library must be aware of the particular semantics associated with the CVARs of interest.
+\subsection {User-Guided Tuning through PYCOOLR} Our infrastructure provides users the ability to fine-tune the MPI library by setting CVARs at runtime. As depicted in Figure \ref{fig:manualtuning}, we use the BEACON backplane communication infrastructure to enable user-guided tuning. TAU and BEACON interface with each other in a bi-directional fashion. Aside from acting as a publisher of PVAR data, TAU is a subscriber to a BEACON topic used for communicating CVAR updates. The PYCOOLR GUI has been extended to enable the user to set new values for multiple CVARs at runtime --- Figure \ref{fig:pycoolrcvars} displays a screenshot of the PYCOOLR window that enables this functionality.
+\par Together with the online monitoring support provided by PYCOOLR, this user-guided tuning infrastructure can enable a user to experiment with different settings for CVARs and note their effects on selected PVARs or other performance metrics. We must note that this infrastructure has one significant limitation --- the value that the user sets for a CVAR is \textit{uniformly} applied across MPI processes. In other words, each MPI process receives the same value for the CVAR --- this may not be ideal, as it is likely that each process displays a different behavior and thus may have a different optimal value for a given setting. We argue that this infrastructure is nevertheless useful in the experimentation phase, wherein the user is trying to determine the CVAR that is important for a given situation/application.
+
+\begin{center}
+        \begin{figure*}[tbp!]
+        \centering
+                \includegraphics[scale=0.4,keepaspectratio]{figures/Manual_Tuning_Design}
+                \caption{User-Guided Tuning with BEACON/PYCOOLR}
+                \label{fig:manualtuning}
+        \end{figure*}
+\end{center}
+
+\section{Plugin Infrastructure in TAU}
+
+TAU is a comprehensive software suite that is comprised of well-separated components providing instrumentation, measurement and analysis capabilities. Our vision for performance engineering of MPI applications involves a \textit{more active} involvement of TAU in monitoring, debugging and tuning behavior \textit{at runtime}. The MPI\_T interface provides tools an opportunity to realize this vision.
+\par Recall that the MPI\_T interface allows MPI implementations complete freedom in defining their own PVARs and CVARs to export. However, this freedom comes with a cost to tool writers for MPI\_T --- each MPI implementation will require its own custom tuning and re-configuration logic. From a software infrastructure development standpoint, it would be preferable to design a framework that will allow multiple such customized autotuning logic to co-exist \textit {outside of core tool logic}, and be appropriately loaded depending on the MPI library being used. With this motivation in mind, we have added support for a \textit{generic} plugin infrastructure in TAU that can be used to develop and load custom logic for a variety of performance engineering needs. The latest version of TAU\footnote{http://tau.uoregon.edu} supports this plugin infrastructure.
+
+\begin{center}
+        \begin{figure}[tbp!]
+         \centering
+         \includegraphics[scale=0.5,keepaspectratio]{figures/Pycoolr-CVARs}
+         \caption{Screenshot of PYCOOLR window to update CVARs}
+         \label{fig:pycoolrcvars}
+        \end{figure}
+\end{center}
+
+\subsection{Design Overview} In the current design, plugins are \verb+C\+\verb+C+\texttt{++} modules that are built into separate shared libraries. The user can specify the path to the directory containing the plugins using the environment variable \verb+TAU_PLUGINS_PATH+. The user can also specify the plugins to be loaded using the environment variable \verb+TAU_PLUGINS+ separated by a delimiter. 
+\par In keeping with the general design of plugin frameworks, the TAU plugin system has the following phases:
+\begin {itemize}
+\item \textbf{Initialization}: This is invoked during TAU library initialization. During this phase, TAU's plugin manager reads the environment variables \verb+TAU_PLUGINS_PATH+ and \verb+TAU_PLUGINS+ and loads the plugins in the order specified by \verb+TAU_PLUGINS+. Each plugin \textit{\textbf{must}} implement a function called \verb+Tau_plugin_init_func+. Inside this function, it can register callbacks for a subset of \textit{plugin events} it is interested in. Note that each plugin may register callbacks for more than one event. The plugin manager maintains an \textit{ordered} list of active plugins for each event supported.
+\item \textbf{Event Callback Invocation}: We define some salient plugin events in TAU that could be interesting or useful from a performance engineering standpoint. These events are discussed in detail in Section 5.4.2. When these plugin events occur during execution of an application instrumented with TAU, the plugin manager invokes the registered callbacks for the specific event in the order in which the corresponding plugins were loaded. Each event that is supported has a specific, typed data object associated with it. When the event occurs, this data object is populated and sent as a parameter to the plugin callback. 
+\item \textbf{Finalize Phase}: When TAU is done generating the profiles for the application, the plugins are unloaded, and all the auxiliary memory resources allocated by the plugin manager are freed.
+\end{itemize}
+
+\subsection{Plugin Events Supported}
+Plugin events are entry points into the plugin code that performs a custom task. Currently, TAU defines and supports the following events:
+\begin{itemize}
+\item \verb+FUNCTION_REGISTRATION+: TAU creates and registers a \verb+FunctionInfo+ object for all functions it instruments and tracks. This event marks the end of the registration phase for the \verb+FunctionInfo+ object that was created.
+\item \verb+ATOMIC_EVENT_REGISTRATION+: TAU defines \textit{atomic events} to track PAPI counters, PVARs and other entities which do not follow interval event semantics. This plugin event marks the end of the registration phase for the atomic event and is triggered when the atomic event is created. In the context of our MPI\_T infrastructure, this plugin event is triggered once for every PVAR that is exported by the MPI library.
+\item \verb+ATOMIC_EVENT_TRIGGER+: When the value of an atomic event is updated, this event is triggered. This plugin event is triggered once for each PVAR, every time the MPI\_T interface is queried.
+\item \verb+INTERRUPT_TRIGGER+: TAU's sampling subsystem relies on installing an interrupt handler for the \verb+SIGUSR+ signal, and performs the sampling within this interrupt handler. When TAU is used with its sampling capabilities turned on, this plugin event is triggered within TAU's interrupt handler (10 seconds is the default interrupt interval).
+\item \verb+END_OF_EXECUTION+: When TAU has finished creating and writing the profile files for the application, this plugin event is triggered.
+\end{itemize}
+We plan to add to the list of supported events in future releases.
+
+\subsection{Use Case: Filter Plugin to Disable Instrumentation at Runtime}
+To demonstrate a sample usage scenario for the plugin architecture, we have created a plugin that filters out instrumented functions from being profiled at runtime, based on a user-provided selective instrumentation file. This situation arises when the application has been instrumented using either the compiler or TAU's source instrumentation tool --- the Program Database Toolkit (PDT)~\cite{PDT}.
+\par PDT works by parsing the input source file to detect function definitions and function call sites, and automatically adds the TAU instrumentation API calls to these sites. The user may want to prevent certain \textit{automatically instrumented functions} from being profiled --- these functions may be frequently invoked but not have a significant impact on overall runtime. They may pollute the generated profiles and more importantly, add to the measurement overheads without providing any real benefit. From a profiling standpoint, there is solid motivation to provide a mechanism that allows such functions to be excluded from profiling.
+\par We use our plugin infrastructure to provide this functionality --- our filter plugin registers a callback for the \verb+FUNCTION_REGISTRATION+ plugin event. Recall that this event is triggered once for every function instrumented by TAU. Within the callback for the \verb+FUNCTION_REGISTRATION+ event, we read a user-provided selective instrumentation file that contains a list of functions to be excluded from profiling. The data object for this plugin event contains the function name information. If there is a match between the function being registered and the list of function names in the selective instrumentation file, we set the profile group for the function to be \verb+TAU_DISABLE+, effectively switching off profiling for this function.
+\section{Plugins for Autotuning}
+Figure \ref{fig:plugininfrastructure} depicts TAU plugins in the context of our MPI\_T infrastructure. As discussed in Section 5.2, TAU samples PVAR data from the MPI\_T interface inside a signal handler for the \verb+SIGUSR+ signal. TAU can use this collected PVAR data to perform an autotuning decision inside the signal handler --- this is realized through plugins that install callbacks for the \verb+INTERRUPT_TRIGGER+ event. This event is triggered every time TAU samples the MPI\_T interface, and the registered plugin callbacks are invoked. Inside the callback, the plugin has access to all the PVAR data collected and performs a \textit{runtime autotuning decision} that may result in updated values for \textit{one or more} CVARs (knobs). Plugins can make use of core TAU modules to interact with the MPI\_T interface to update CVAR values.
+\par Note that the plugin infrastructure allows the user to specify more than one plugin --- this feature can be utilized to load multiple autotuning policies, each of which is built into a separate shared library. While plugins use common functionality defined inside TAU to read or write to the MPI\_T interface, the autotuning logic itself is custom to each plugin --- in the future, we plan to support a high-level infrastructure to express autotuning policies that reduce duplicated code across plugins. Our starting point for developing autotuning policies relies on users with background or offline knowledge about specific domains, applications, and libraries.
+
+\begin{center}
+        \begin{figure*}[tbp!]
+         \centering
+                \includegraphics[scale=0.5,width=\columnwidth,keepaspectratio]{figures/Plugin_Infrastructure}
+                \caption{Plugin Infrastructure}
+                \label{fig:plugininfrastructure}
+        \end{figure*}
+\end{center}
+
+\section{Plugins for Recommendations}
+We take advantage of the plugin mechanism to develop performance recommendations for the user. MPI libraries can export a large number of control variables --- many of which are also environment variables whose default settings may not always be optimal for a given application/situation. Moreover, the user may not even be aware of the existence of certain settings or MPI implementation-specific features that can improve performance. A profiling tool such as TAU is in an ideal position to fill this gap with the MPI\_T interface acting as an enabling mechanism. \par Performance data gathered by TAU through the MPI\_T and PMPI interface can be analyzed by a recommendation plugin to provide useful hints to the user at the end of the application execution. Recommendation plugins register callbacks for the \verb+END_OF_EXECUTION+ event that is triggered when TAU has finished collecting and writing profile information. Currently, TAU supports the generation of recommendations as part of the metadata that is associated with each process. This metadata is available for viewing on \verb+ParaProf+.
+
+
+\section{Usage Scenarios}
+MPI\_T in combination with the TAU plugin architecture makes it possible to do powerful operations that would be difficult to realize otherwise. The following describes the design of a recommendation to enable hardware offloading of collectives, and an autotuning policy to free unused MPI internal buffers using MPI\_T. These policies are implemented using plugins.
+\subsection{Recommendation Use Case: Hardware Offloading of Collectives}
+MVAPICH2 now supports offloading of \verb+MPI_Allreduce+ to network hardware using the SHArP~\cite{SHARP} protocol. Hardware offloading is mainly beneficial to applications where communication is sensitive to latency. As the \verb+MPI_Allreduce+ call in MiniAMR involves messages of 8 bytes, it is a prime candidate to benefit from hardware offloading. \par
+During the profiling phase, TAU collects statistics about the average message size involved in \verb+MPI_Allreduce+ operation. It also collects the time spent within \verb+MPI_Allreduce+ versus the overall application time. If the message size is below a certain threshold and the percentage of total runtime spent within \verb+MPI_Allreduce+ is above a certain threshold, through \verb+ParaProf+, TAU recommends the user to set the CVAR \verb+MPIR_CVAR_ENABLE_SHARP+ for subsequent runs. Note that this recommendation policy was implemented using plugins. The same infrastructure can be used to support multiple recommendation policies.
+\subsection{Autotuning Use Case: Freeing Unused Buffers}
+MVAPICH2 uses internal communication buffers (VBUFs) to temporarily hold messages that are yet to be transferred to the receiver in point-to-point communications. There are multiple VBUF pools which vary in size of the VBUF. At runtime, MVAPICH2 performs a match based on the size of the message and accordingly selects a VBUF pool to use. Specifically, these VBUFs are used when MVAPICH2 chooses to send the message in an \emph{Eager} manner to reduce communication latency. Typically, short messages are sent using the \emph{Eager} protocol, and longer messages are sent using the \emph{Rendezvous} protocol, which does not involve the use of VBUFs. The primary scalability issue with using \emph{Eager} protocol is excessive memory consumption that can potentially lead to an application crash. \par
+Depending on the pattern of message sizes involved in point-to-point communication, the usage level of these VBUF pools can vary with time and between processes. It can be the case that the application makes scarce use of VBUFs, or uses VBUFs only from one pool (3DStencil is one such use case). In such a scenario, unused VBUFs represent wasted memory resource. There could be significant memory savings in freeing these unused VBUFs.
+
+For this use case, specific CVARs include:
+\begin{itemize}
+  \item \verb+MPIR_CVAR_IBA_EAGER_THRESHOLD+: The value of this CVAR represents the message size above which MVAPICH2 uses the \emph{Rendezvous} protocol for message transfer in point-to-point communication. Below this message size, MVAPICH2 uses the \emph{Eager} protocol
+  \item \verb+MPIR_CVAR_VBUF_TOTAL_SIZE+: The size of a single VBUF. For best results, this should have the same value as \verb+MPIR_CVAR_IBA_EAGER_THRESHOLD+
+  \item \verb+MPIR_CVAR_VBUF_POOL_CONTROL+: Boolean value that specifies if MVAPICH2 should try to free unused VBUFs at runtime. By default, MVAPICH2 will try to free from any available pool if this variable is set
+  \item \verb+MPIR_CVAR_VBUF_POOL_REDUCED_VALUE+: This CVAR specifies the lower limit to which MVAPICH2 can reduce the number of VBUFs. This is an array, and each index represents the corresponding VBUF pool. This CVAR takes effect only if  pool control is enabled. This CVAR allows more fine-grained control over freeing of VBUFs, potentially reducing unnecessary allocations and freeing of VBUFs, if the usage pattern is known in advance
+\end{itemize}
+
+Correspondingly, PVARs of interest include:
+\begin{itemize}
+  \item \verb+mv2_vbuf_allocated_array+: Array that represents the number of VBUFs allocated in a pool specified by an index
+  \item \verb+mv2_vbuf_max_use_array+: Array that represents the maximum number of VBUFs that are actually used in a given pool specified by an index
+  \item \verb+mv2_total_vbuf_memory+: Total VBUF memory (in bytes) used for the specified process across all pools
+\end{itemize}
+
+\subsubsection{Autotuning Policy}
+When we increase the value of the \emph{Eager} limit specified by \\\verb+MPIR_CVAR_IBA_EAGER_THRESHOLD+, there is an opportunity for increased overlap between communication and computation as larger messages are sent eagerly. As a result, the overall execution time for the application may reduce. Figure \ref{fig:beforeeager} is an enlarged Vampir~\cite{Vampir} summary process timeline view for one iteration of the 3DStencil application before applying the Eager optimization. Figure \ref{fig:aftereager} is a Vampir summary process timeline view for one iteration of the 3DStencil application after applying the Eager optimization. The timeline view focuses on the phase of the iteration where there is an explicit opportunity for communication-computation overlap through the use of non-blocking sends and receives. The X-axis represents time and the Y-axis represents the percentage of MPI processes inside user code (green) and MPI code (red) respectively at any given instant in time --- larger areas of green indicates a higher amount of useful work (computation) performed by processes as a result of a larger communication-computation overlap. 
+
+ \begin{figure*}[tbp!]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[scale=1.0,width=\columnwidth,keepaspectratio]{figures/Overlap-before}
+         \caption{Vampir~\cite{Vampir} summary process timeline view of 3DStencil before Eager threshold tuning}
+ \label{fig:beforeeager}
+ \end{figure*}
+
+ \begin{figure*}[tbp!]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[scale=1.0,width=\columnwidth,keepaspectratio]{figures/Overlap-after}
+         \caption{Vampir~\cite{Vampir} summary process timeline view of 3DStencil after Eager threshold tuning: Increased time spent in user code}
+ \label{fig:aftereager}
+ \end{figure*}
+
+
+\par Figure \ref{fig:aftereager} shows the effect of an increased Eager threshold --- a 20\% increase in the number of MPI processes inside user code during the phase where communication is overlapped with computation. This increase is due to the fact that less time is spent waiting for the non-blocking calls to complete at the \verb+MPI_Wait+ barrier. With a larger eager threshold, the MPI library can advance communication in the background while the sending process is busy performing the computation. The extreme right edges of Figure \ref{fig:aftereager} are to be ignored as they represent the phase where the application is performing pure communication (refer to Section 4.4.2).\par
+Increasing the Eager limit may have the following two distinct effects:
+\begin{itemize}
+\item Larger VBUFs may need to be allocated. Note that this does not mean that \textit{more} VBUFs are allocated --- it only means that the size of each individual VBUF in the affected pool has increased in order to hold larger messages. Recall that MVAPICH2 has four VBUF pools --- the VBUFs from different pools vary in only their size. 
+\item As a result of the increased Eager limit, larger messages would be transferred through the Eager protocol instead of the Rendezvous protocol. Depending on the communication characteristics of the application, this may lead to increased usage of VBUFs from one or more VBUF pools. If there is a shortage of VBUFs in a given pool, MVAPICH2 may need to allocate additional VBUFs.
+\end{itemize}
+
+A combination of these two factors may lead to an increase in the total VBUF memory usage inside MVAPICH2. Figure \ref{fig:pycoolrincr} is a PYCOOLR screenshot illustrating this increase in total VBUF memory usage (across all four pools) for AmberMD application when the Eager threshold is raised. We see a similar increase in total VBUF memory usage for the 3DStencil application as well. The X-axis represents time and the Y-axis represents memory in bytes with 10\textsuperscript{7} as the multiplier. Each red dot represents the instantaneous \verb+mv2_total_vbuf_memory+ (in bytes) for one MPI process. If MPI processes have the same VBUF memory usage at any point in time, then the red dots would overlap. From Figure \ref{fig:pycoolrincr}, it is evident that there are two classes of processes --- one with a VBUF memory usage of roughly 3 MB (before Eager tuning), and another with a VBUF memory usage level of roughly 6 MB (before Eager tuning). The eager threshold is raised by setting the CVAR \verb+MPIR_CVAR_IBA_EAGER_THRESHOLD+ and \verb+MPIR_CVAR_VBUF_SIZE+ statically, during \verb+MPI_Init+. Figure \ref{fig:pycoolrincr} shows that the \verb+mv2_total_vbuf_memory+ increases to approximately 12 MB for the processes with a lower VBUF memory usage, and approximately 23 MB for the class of processes with a higher VBUF memory usage. \par 

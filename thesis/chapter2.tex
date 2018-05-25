@@ -1,5 +1,69 @@
-\chapter{MPI Tools Information Interface}
+\chapter{Background and Related Work}
+
+\section{MPI Tools Information Interface}
 In order to address a lack of a standard mechanism to gain insights into, and to manipulate the internal behavior of MPI implementations, the MPI Forum introduced the MPI Tools Information Interface (MPI\_T) in the MPI 3.0 standard~\cite{MPI_3_1}. The MPI\_T interface provides a simple mechanism that allows MPI implementers to expose variables that represent a property, setting or performance measurement from within the implementation for use by tools, tuning frameworks, and other support libraries. The interface broadly defines access semantics of two variable types: \textit{control} and \textit{performance}. The former defines semantics to list, query and set control variables exposed by the underlying implementation. The latter defines semantics to gain insights into the state of MPI using counters, timing data, resource utilization data, and so on. Rich metadata information can be added to both kinds of variables. \par
 \textit{Control variables (CVARs)} are properties and configuration settings that are used to modify the behavior of the MPI implementation. A common example of such a control variable is the \emph{Eager Limit} - the upper limit until which messages are sent using the Eager protocol. An MPI implementation may choose to export many environment variables as control variables through the MPI\_T interface. Depending on what the variable represents, it may be set once before \verb+MPI_Init+ or may be changed dynamically at runtime. Further, the interface allows each process freedom to set its own value for the control variable provided the MPI implementation supports it. The MPI\_T interface provides API's to read, write and query information about control variables and external tools can use these API's to discover information about the control variables supported. \par
 \textit{Performance variables (PVARs)} can represent internal counters and metrics that can be read, collected and analyzed by an external tool. An example of one such PVAR exported by MVAPICH2 is \verb+mv2_vbuf_total_memory+ which represents the total amount of memory used for internal communication buffers within the library. In a manner similar to CVARs, the interface specifies API's to query and access PVARs. MPI\_T interface allows multiple in-flight performance sessions so it is possible for different tools to \emph{plug into} MPI through this interface. \par
 The MPI\_T interface allows an MPI implementation to export any number of PVARs and CVARs, and it is the responsibility of the tool to discover these through appropriate API calls, and use them correctly. There are no fixed events or variables that MPI implementations must support - complete freedom is granted to the implementation in this regard.
+
+\section {Software}
+Our work targets the development of an integrated software infrastructure that enables the use of MPI\_T for performance introspection and online tuning. Here we describe the functionality of the key components and present the applications we used in our study.
+\subsection{TAU Performance System$^{\textregistered}$}
+TAU~\cite{Shende:2006:TPP:1125980.1125982} is a comprehensive performance analysis toolkit that offers capabilities to instrument and measure scalable parallel applications on a variety of HPC architecture.
+TAU supports standard programming models including MPI and OpenMP. It can profile and trace MPI applications through the PMPI interface either by linking in the TAU library or through library interposition.
+TAU includes a tool for parallel profile analysis (ParaProf), performance data mining (PerfExplorer), and performance experiment management (TAUdb).
+\subsection {CALIPER}
+
+\subsection{MVAPICH2}
+MVAPICH2~\cite{MVAPICH2} is a cutting-edge open source MPI implementation for high-end computing systems that is based on the MPI 3.1 standard. MVAPICH2 currently supports InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE networking technologies. It offers the user a number of tunable environment parameters and has GPU and MIC optimized versions available.
+\subsection{BEACON}
+BEACON (Backplane for Event and Control Notification)~\cite{BEACON} is a communication infrastructure, originally part of the Argo project~\cite{Perarnau:2015:DMM:2960986.2961000}.
+BEACON provides interfaces for sharing event information in a distributed manner, through nodes and enclaves - a group of nodes.
+It relies on a Publish/Subscribe paradigm, and encompasses backplane end-points (called BEEPs) which are in charge of detecting and generating information to be propagated throughout the system.
+Other BEEPs subscribe to this information and can generate appropriate actions.  
+Events are exchanged between publishers and subscribers through user-defined topics. Examples of such topics are power, memory footprint and CPU frequency.
+These interfaces allow BEACON to be called and used by external components such as performance tools for exchanging information.
+BEACON also includes a modular GUI named PYCOOLR that provides support for dynamic observation of intercepted events. PYCOOLR subscribes to these events by using the BEACON API and is able to display their content during application runtime. Through the GUI, the user can select at runtime the events that represent the performance metrics he wants to observe, and the GUI plots the selected events on the fly.
+
+
+\section{Related Work}
+The existing body of research on MPI performance engineering techniques has revolved around a few common themes. These include design and usage of interfaces similar in spirit to MPI\_T, user interactions with performance tools for the purpose of tuning, and automatic tuning of MPI runtimes. We describe some contributions addressing these areas below.
+\subsection{Interfaces for Runtime Introspection}
+
+Throughout MPI’s history, it has always been of interest to application developers to observe the inner workings of the MPI implementation. Early attempts to “open up” an implementation for introspection gained some traction in the tools community.
+PERUSE~\cite{keller06} allows observation of internal mechanisms of MPI libraries by defining callbacks related to certain events, illustrated by specific use cases. 
+For instance, the user can have a detailed look at the behavior of MPI libraries during point-to-point communications.
+This interface was implemented inside OpenMPI. 
+But it failed to be adopted as a standard by the MPI community, mainly due to a potential mismatch between MPI events proposed by PERUSE and some MPI implementations. \par
+With the advent of the MPI\_T interface, Islam et al. introduce Gyan~\cite{Islam:2014:ECN:2642769.2642781}, using MPI\_T to enable runtime introspection. Gyan intercepts the call to \verb+MPI_Init+ through the PMPI interface, initializes MPI\_T and starts a PVAR monitoring session to track PVARs specified by the user through an environment variable. If no PVAR is specified, Gyan tracks all PVARs exported by the MPI implementation. Gyan intercepts \verb+MPI_Finalize+ through PMPI, reads the values of all performance variables being tracked through the MPI\_T interface, and displays statistics for these PVARs. Notably, Gyan collects the values of PVARs only once at \verb+MPI_Finalize+, while our infrastructure supports tracking of PVARs at regular intervals during the application run, in addition to providing online monitoring and autotuning capabilities.
+
+\subsection{Performance Recommendations}
+
+Other contributions, focusing on tuning MPI configuration parameters, provide performance recommendations to the users.
+MPI Advisor~\cite{Gallardo:2015:MAM:2802658.2802667,doi:10.1177/1094342016684005} starts from the idea that application developers do not necessarily have sufficient knowledge of MPI library design. 
+This tool is able to characterize predominant communication behavior of MPI applications and gives recommendations on how the runtime can be tuned. 
+It addresses the following parameter categories: (i) point-to-point protocols (\textit{Eager} vs \textit{Rendezvous}), (ii) collective communication algorithms, (iii) MPI task-to-cores mapping, and (iv) Infiniband transport protocol.
+The execution of MPI Advisor comprises three phases: data collection, analysis, and recommendations.
+MPI Advisor uses mpiP~\cite{mpiP} to collect application profiles and related information such as message size and produce recommendations to tune MPI\_T CVARs.
+It requires only one application run on the target machine to produce recommendations.
+While our recommendation engine is similar in functionality to MPI Advisor, our infrastructure leverages TAU's profiling capabilities to give us access to more detailed application performance information. This enables us to implement more sophisticated recommendation policies. The focus of our work is a plugin infrastructure that enables recommendation generation as one of many possible usage scenarios, and not a sole outcome.
+\par Another tool, OPTO (The Open Tool for Parameter Optimization)~\cite{Chaarawi2008}, aids the optimization of OpenMPI library by systematically testing a large number of combinations of the input parameters.
+Based on the measurements performed on MPI benchmarks, the tool is able to output the best attribute combinations.
+
+\subsection{Autotuning of MPI Runtimes}
+
+Some tools introduce autotuning capabilities of MPI applications by deducing best configuration parameters, involving different techniques for searching.
+Periscope and its extensions~\cite{Gerndt:2010:APA:1753228.1753232,Sikora:2016:AMA:2916026.2916028}, part of the AutoTune project, provide capabilities of performance analysis and autotuning of MPI applications, by studying runtime parameters. 
+Starting from different parameter configurations specified by the user, the tool generates a search space. 
+It then searches for the best values, by using different strategies involving heuristics such as evolutionary algorithms and genetic algorithms. 
+Based on measurements obtained by running experiments, the tool finds the best configuration parameters.
+ATune~\cite{Pellegrini:2010:ATM:1787275.1787310} uses machine learning techniques to automatically tune parameters of the MPI runtime.
+The tool runs MPI benchmarks and applications on a target platform to predict parameter values, via a training phase.
+To the best of our knowledge, there exists no prior work of autotuning MPI runtimes using the MPI\_T interface.
+
+\subsection{Policy Engine for Performance Tuning}
+
+Outside the scope of MPI, Huck et al. describe APEX~\cite{Huck:2013:EPA:2491661.2481434}, the \textit{Autonomic Performance Environment for eXascale}.
+APEX ships with TAU, and is part of the XPRESS project, which includes a parallel programming model named OpenX, and a runtime implementing this model, HPX.
+Working on top of HPX, APEX provides runtime introspection and includes a policy engine introduced as a core feature: the policies are rules deciding the outcome based on observed states of APEX.
+These rules can thus change the behavior of the runtime --- such as changing task granularity, triggering data movements or repartitioning.

@@ -1,64 +1,63 @@
 \select@language {UKenglish}
 \contentsline {chapter}{\numberline {I}\uppercase {Introduction}}{1}
 \contentsline {section}{ Introduction}{1}
-\contentsline {section}{ Problem Context}{3}
-\contentsline {subsection}{ Interfaces for Runtime Introspection}{4}
-\contentsline {subsection}{ Performance Recommendations}{5}
-\contentsline {subsection}{ Autotuning of MPI Runtimes}{6}
-\contentsline {subsection}{ Policy Engine for Performance Tuning}{6}
-\contentsline {chapter}{\numberline {II}\uppercase {MPI Tools Information Interface}}{7}
-\contentsline {chapter}{\numberline {III}\uppercase {Background}}{9}
-\contentsline {subsection}{ TAU Performance System$^{\textregistered }$}{9}
-\contentsline {subsection}{ MVAPICH2}{9}
-\contentsline {subsection}{ BEACON}{10}
-\contentsline {subsection}{ Target Applications}{10}
-\contentsline {subsubsection}{ AmberMD}{10}
-\contentsline {subsubsection}{ SNAP}{11}
-\contentsline {subsubsection}{ 3DStencil}{12}
-\contentsline {subsubsection}{ MiniAMR}{12}
-\contentsline {chapter}{\numberline {IV}\uppercase {Design of MPI\_T support in TAU}}{13}
-\contentsline {section}{ Design}{13}
-\contentsline {subsection}{ Enhancing MPI\_T Support in MVAPICH2}{13}
-\contentsline {subsubsection}{ Monitoring and Modifying Collective Algorithms}{13}
-\contentsline {subsubsection}{ Monitoring and Controlling Usage of Virtual Buffers}{14}
-\contentsline {subsection}{ Enabling Runtime Instrospection and Online Monitoring}{15}
-\contentsline {subsubsection}{ Gathering Performance Data}{15}
-\contentsline {subsubsection}{ Online Monitoring}{16}
-\contentsline {subsubsection}{ Viewing Performance Data}{17}
-\contentsline {subsection}{ Runtime Tuning through MPI\_T}{18}
-\contentsline {subsubsection}{ User-Guided Tuning through PYCOOLR}{19}
-\contentsline {subsection}{ Plugin Infrastructure in TAU}{20}
-\contentsline {subsubsection}{ Design Overview}{21}
-\contentsline {subsubsection}{ Plugin Events Supported}{22}
-\contentsline {subsubsection}{ Use Case: Filter Plugin to Disable Instrumentation at Runtime}{23}
-\contentsline {subsection}{ Plugins for Autotuning}{24}
-\contentsline {subsection}{ Plugins for Recommendations}{25}
-\contentsline {chapter}{\numberline {V}\uppercase {Usage Scenarios}}{28}
-\contentsline {section}{ Usage Scenarios}{28}
-\contentsline {subsection}{ Recommendation Use Case: Hardware Offloading of Collectives}{28}
-\contentsline {subsection}{ Autotuning Use Case: Freeing Unused Buffers}{29}
-\contentsline {subsubsection}{ Autotuning Policy}{30}
-\contentsline {chapter}{\numberline {VI}\uppercase {Experiments}}{35}
-\contentsline {section}{ Experiments}{35}
-\contentsline {subsection}{ Experimental Setup}{35}
-\contentsline {subsection}{ Results}{36}
-\contentsline {subsubsection}{ Amber}{36}
-\contentsline {subsubsection}{ SNAP}{37}
-\contentsline {subsubsection}{ 3DStencil}{38}
-\contentsline {subsubsection}{ MiniAMR}{39}
-\contentsline {subsection}{ Overhead in Enabling MPI\_T}{41}
-\contentsline {chapter}{\numberline {VII}\uppercase {Discussion and Future Work}}{44}
-\contentsline {section}{ Discussion}{44}
-\contentsline {section}{ Conclusion and Future Work}{45}
-\contentsline {chapter}{\numberline {VIII}\uppercase {CALIPER - MPI\_T}}{47}
-\contentsline {section}{ Introduction}{47}
-\contentsline {section}{ Creating a performance session}{48}
-\contentsline {section}{ PVAR handle allocation}{48}
-\contentsline {section}{ PVAR classes and notion of aggregability}{50}
-\contentsline {section}{ Creating Caliper attributes for PVARs}{52}
-\contentsline {section}{ Querying and storing PVARs}{53}
-\contentsline {section}{ Challenges in implementing MPI\_T in Caliper}{54}
-\contentsline {section}{ Experiments}{54}
-\contentsline {chapter}{\numberline {IX}\uppercase {Integrating TAU and CALIPER}}{55}
-\contentsline {chapter}{\numberline {X}\uppercase {Comparing the MPI\_T implementations in TAU and CALIPER}}{56}
-\contentsline {chapter}{REFERENCES CITED}{57}
+\contentsline {section}{ Thesis Outline}{3}
+\contentsline {chapter}{\numberline {II}\uppercase {Background and Related Work}}{4}
+\contentsline {section}{ MPI Tools Information Interface}{4}
+\contentsline {section}{ Software}{5}
+\contentsline {subsection}{ TAU Performance System$^{\textregistered }$}{5}
+\contentsline {subsection}{ CALIPER}{6}
+\contentsline {subsection}{ MVAPICH2}{6}
+\contentsline {subsection}{ BEACON}{6}
+\contentsline {section}{ Related Work}{7}
+\contentsline {subsection}{ Interfaces for Runtime Introspection}{7}
+\contentsline {subsection}{ Performance Recommendations}{8}
+\contentsline {subsection}{ Autotuning of MPI Runtimes}{9}
+\contentsline {subsection}{ Policy Engine for Performance Tuning}{10}
+\contentsline {chapter}{\numberline {III}\uppercase {Design of MPI\_T support in TAU}}{11}
+\contentsline {section}{ Enhancing MPI\_T Support in MVAPICH2}{11}
+\contentsline {subsection}{ Monitoring and Modifying Collective Algorithms}{11}
+\contentsline {subsection}{ Monitoring and Controlling Usage of Virtual Buffers}{13}
+\contentsline {section}{ Enabling Runtime Instrospection and Online Monitoring}{13}
+\contentsline {subsection}{ Gathering Performance Data}{13}
+\contentsline {subsection}{ Online Monitoring}{15}
+\contentsline {subsection}{ Viewing Performance Data}{15}
+\contentsline {section}{ Runtime Tuning through MPI\_T}{16}
+\contentsline {subsection}{ User-Guided Tuning through PYCOOLR}{17}
+\contentsline {section}{ Plugin Infrastructure in TAU}{18}
+\contentsline {subsection}{ Design Overview}{20}
+\contentsline {subsection}{ Plugin Events Supported}{21}
+\contentsline {subsection}{ Use Case: Filter Plugin to Disable Instrumentation at Runtime}{22}
+\contentsline {section}{ Plugins for Autotuning}{23}
+\contentsline {section}{ Plugins for Recommendations}{25}
+\contentsline {section}{ Usage Scenarios}{25}
+\contentsline {subsection}{ Recommendation Use Case: Hardware Offloading of Collectives}{26}
+\contentsline {subsection}{ Autotuning Use Case: Freeing Unused Buffers}{26}
+\contentsline {subsubsection}{ Autotuning Policy}{28}
+\contentsline {chapter}{\numberline {IV}\uppercase {Design of MPI\_T support in CALIPER}}{33}
+\contentsline {section}{ Introduction}{33}
+\contentsline {section}{ Creating a performance session}{34}
+\contentsline {section}{ PVAR handle allocation}{34}
+\contentsline {section}{ PVAR classes and notion of aggregability}{36}
+\contentsline {section}{ Creating Caliper attributes for PVARs}{38}
+\contentsline {section}{ Querying and storing PVARs}{39}
+\contentsline {section}{ Challenges in implementing MPI\_T in Caliper}{40}
+\contentsline {chapter}{\numberline {V}\uppercase {Experiments}}{41}
+\contentsline {section}{ Target Applications}{41}
+\contentsline {subsection}{ AmberMD}{41}
+\contentsline {subsection}{ SNAP}{41}
+\contentsline {subsection}{ 3DStencil}{42}
+\contentsline {subsection}{ MiniAMR}{42}
+\contentsline {section}{ Experiments}{43}
+\contentsline {subsection}{ Experimental Setup}{43}
+\contentsline {subsection}{ Results}{44}
+\contentsline {subsubsection}{ Amber}{44}
+\contentsline {subsubsection}{ SNAP}{45}
+\contentsline {subsubsection}{ 3DStencil}{46}
+\contentsline {subsubsection}{ MiniAMR}{47}
+\contentsline {subsection}{ Overhead in Enabling MPI\_T}{49}
+\contentsline {chapter}{\numberline {VI}\uppercase {Comparing the MPI\_T implementations in TAU and CALIPER}}{52}
+\contentsline {chapter}{\numberline {VII}\uppercase {Discussion and Future Work}}{53}
+\contentsline {section}{ Discussion}{53}
+\contentsline {section}{ Conclusion and Future Work}{54}
+\contentsline {chapter}{REFERENCES CITED}{56}

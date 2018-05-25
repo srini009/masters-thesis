@@ -13,6 +13,8 @@ Tuning MPI library behavior through modification of environment variables presen
 These complexities motivate the need for a performance measurement system such as TAU to play a more active role in the performance debugging and tuning process. With the introduction of the \textit{MPI Tools Information Interface (MPI\_T)} in the MPI 3.0 standard, there is now a standardized mechanism through which MPI libraries and external performance tuning software can share information. \par
 This paper describes a software engineering infrastructure that enables an MPI implementation to interact with performance tuning software for the purpose of runtime introspection and tuning through the MPI\_T interface. We implement such an infrastructure with the integration of MVAPICH2~\cite{MVAPICH2} and TAU~\cite{Shende:2006:TPP:1125980.1125982}. We use a combination of production (AmberMD~\cite{AmberMD}), and synthetic applications (MiniAMR~\cite{Mantevo} and 3DStencil) as case studies to demonstrate the effectiveness of our design.
 
+\section {Thesis Outline}
+
 This paper makes the following contributions:
 \begin{itemize}
 	\item Enhance MPI\_T support in MVAPICH2 by developing a richer class of MPI\_T performance and control variables;
@@ -20,48 +22,3 @@ This paper makes the following contributions:
 	\item Perform runtime autotuning through MPI\_T by developing plugin extensions for TAU; and 
 	\item Generate performance recommendations through plugin extensions for TAU.
 \end{itemize}
-
-
-\section {Problem Context}
-
-The existing body of research on MPI performance engineering techniques has revolved around a few common themes. These include design and usage of interfaces similar in spirit to MPI\_T, user interactions with performance tools for the purpose of tuning, and automatic tuning of MPI runtimes. We describe some contributions addressing these areas below.
-\subsection{Interfaces for Runtime Introspection}
-
-Throughout MPI’s history, it has always been of interest to application developers to observe the inner workings of the MPI implementation. Early attempts to “open up” an implementation for introspection gained some traction in the tools community.
-PERUSE~\cite{keller06} allows observation of internal mechanisms of MPI libraries by defining callbacks related to certain events, illustrated by specific use cases. 
-For instance, the user can have a detailed look at the behavior of MPI libraries during point-to-point communications.
-This interface was implemented inside OpenMPI. 
-But it failed to be adopted as a standard by the MPI community, mainly due to a potential mismatch between MPI events proposed by PERUSE and some MPI implementations. \par
-With the advent of the MPI\_T interface, Islam et al. introduce Gyan~\cite{Islam:2014:ECN:2642769.2642781}, using MPI\_T to enable runtime introspection. Gyan intercepts the call to \verb+MPI_Init+ through the PMPI interface, initializes MPI\_T and starts a PVAR monitoring session to track PVARs specified by the user through an environment variable. If no PVAR is specified, Gyan tracks all PVARs exported by the MPI implementation. Gyan intercepts \verb+MPI_Finalize+ through PMPI, reads the values of all performance variables being tracked through the MPI\_T interface, and displays statistics for these PVARs. Notably, Gyan collects the values of PVARs only once at \verb+MPI_Finalize+, while our infrastructure supports tracking of PVARs at regular intervals during the application run, in addition to providing online monitoring and autotuning capabilities.
-
-\subsection{Performance Recommendations}
-
-Other contributions, focusing on tuning MPI configuration parameters, provide performance recommendations to the users.
-MPI Advisor~\cite{Gallardo:2015:MAM:2802658.2802667,doi:10.1177/1094342016684005} starts from the idea that application developers do not necessarily have sufficient knowledge of MPI library design. 
-This tool is able to characterize predominant communication behavior of MPI applications and gives recommendations on how the runtime can be tuned. 
-It addresses the following parameter categories: (i) point-to-point protocols (\textit{Eager} vs \textit{Rendezvous}), (ii) collective communication algorithms, (iii) MPI task-to-cores mapping, and (iv) Infiniband transport protocol.
-The execution of MPI Advisor comprises three phases: data collection, analysis, and recommendations.
-MPI Advisor uses mpiP~\cite{mpiP} to collect application profiles and related information such as message size and produce recommendations to tune MPI\_T CVARs.
-It requires only one application run on the target machine to produce recommendations.
-While our recommendation engine is similar in functionality to MPI Advisor, our infrastructure leverages TAU's profiling capabilities to give us access to more detailed application performance information. This enables us to implement more sophisticated recommendation policies. The focus of our work is a plugin infrastructure that enables recommendation generation as one of many possible usage scenarios, and not a sole outcome.
-\par Another tool, OPTO (The Open Tool for Parameter Optimization)~\cite{Chaarawi2008}, aids the optimization of OpenMPI library by systematically testing a large number of combinations of the input parameters.
-Based on the measurements performed on MPI benchmarks, the tool is able to output the best attribute combinations.
-
-\subsection{Autotuning of MPI Runtimes}
-
-Some tools introduce autotuning capabilities of MPI applications by deducing best configuration parameters, involving different techniques for searching.
-Periscope and its extensions~\cite{Gerndt:2010:APA:1753228.1753232,Sikora:2016:AMA:2916026.2916028}, part of the AutoTune project, provide capabilities of performance analysis and autotuning of MPI applications, by studying runtime parameters. 
-Starting from different parameter configurations specified by the user, the tool generates a search space. 
-It then searches for the best values, by using different strategies involving heuristics such as evolutionary algorithms and genetic algorithms. 
-Based on measurements obtained by running experiments, the tool finds the best configuration parameters.
-ATune~\cite{Pellegrini:2010:ATM:1787275.1787310} uses machine learning techniques to automatically tune parameters of the MPI runtime.
-The tool runs MPI benchmarks and applications on a target platform to predict parameter values, via a training phase.
-To the best of our knowledge, there exists no prior work of autotuning MPI runtimes using the MPI\_T interface.
-
-\subsection{Policy Engine for Performance Tuning}
-
-Outside the scope of MPI, Huck et al. describe APEX~\cite{Huck:2013:EPA:2491661.2481434}, the \textit{Autonomic Performance Environment for eXascale}.
-APEX ships with TAU, and is part of the XPRESS project, which includes a parallel programming model named OpenX, and a runtime implementing this model, HPX.
-Working on top of HPX, APEX provides runtime introspection and includes a policy engine introduced as a core feature: the policies are rules deciding the outcome based on observed states of APEX.
-These rules can thus change the behavior of the runtime --- such as changing task granularity, triggering data movements or repartitioning.
-
