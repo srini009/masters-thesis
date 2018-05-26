@@ -8,15 +8,12 @@ Although it plays a pivotal role in MPI performance engineering, using PMPI alon
 \end{itemize}
 \par Performance characteristics of underlying hardware are constantly evolving as HPC moves toward increasingly heterogeneous platforms. MPI implementations available today~\cite{MVAPICH2,OpenMPI,MPICH,pjn2008} are complex software involving many modular components and offer the user a number of tunable environment variables that can affect performance. In such a setting, performance variations and scalability limitations can come from several sources. Detecting these performance limitations requires a more intimate understanding of MPI internals that cannot be elicited from the PMPI interface alone. \par
 Tuning MPI library behavior through modification of environment variables presents a daunting challenge to the user --- among the rich variety of variables on offer, the user may not be aware of the right setting to modify, or the optimal value for a setting. Further, tuning through MPI environment variables has a notable limitation --- there is no way to fine-tune the MPI library at runtime. Runtime introspection and tuning are especially valuable to applications that display different behavior between phases, and one static setting of MPI parameters may not be optimal for the course of an entire run. In addition to this, each process may behave differently, and thus have a different optimal value for a given setting. \par
-These complexities motivate the need for a performance measurement system such as TAU to play a more active role in the performance debugging and tuning process. With the introduction of the \textit{MPI Tools Information Interface (MPI\_T)} in the MPI 3.0 standard, there is now a standardized mechanism through which MPI libraries and external performance tuning software can share information. \par
-This paper describes a software engineering infrastructure that enables an MPI implementation to interact with performance tuning software for the purpose of runtime introspection and tuning through the MPI\_T interface. We implement such an infrastructure with the integration of MVAPICH2~\cite{MVAPICH2} and TAU~\cite{Shende:2006:TPP:1125980.1125982}. We use a combination of production (AmberMD~\cite{AmberMD}), and synthetic applications (MiniAMR~\cite{Mantevo} and 3DStencil) as case studies to demonstrate the effectiveness of our design.
+These complexities motivate the need for a performance measurement system such as TAU to play a more active role in the performance debugging and tuning process. With the introduction of the \textit{MPI Tools Information Interface (MPI\_T)} in the MPI 3.0 standard, there is now a standardized mechanism through which MPI libraries and external performance tuning software can share information. 
+\par This document describes a software engineering infrastructure that enables an MPI implementation to interact with performance tuning software for the purpose of runtime introspection and tuning through the MPI\_T interface. Specifically, I describe the design of an infrastructure to enable performance monitoring, runtime introspection, performance tuning and recommendation generation of MPI applications using TAU, and an infrastructure designed for runtime introspection of MPI using CALIPER.
 
 \section {Thesis Outline}
+This thesis describes the design of MPI performance engineering infrastructures of two performance tools that utilize the MPI\_T interface --- namely TAU and CALIPER. While both offer performance measurement and analysis capabilities, they differ in terms of the data model used to store performance information, support for automatic program instrumentation, and level of integration with other performance profiling and tracing toolkits.
+\subsection {Background and Related Work}
 
-This paper makes the following contributions:
-\begin{itemize}
-	\item Enhance MPI\_T support in MVAPICH2 by developing a richer class of MPI\_T performance and control variables;
-	\item Enable performance introspection and online monitoring through tight integration between MVAPICH2, TAU, and BEACON;
-	\item Perform runtime autotuning through MPI\_T by developing plugin extensions for TAU; and 
-	\item Generate performance recommendations through plugin extensions for TAU.
-\end{itemize}
+\section {Coauthored Material}
+
