@@ -19,15 +19,18 @@ Before a tool can read the value of a PVAR (CVAR), it must first allocate a \emp
 \par It is worth noting that the only MPI implementation that exports PVARs and CVARs bound to MPI objects is OpenMPI. As of the time of publishing this document, all of the other popular MPI libraries that support MPI\_T --- namely MPICH, MVAPICH2, and Intel MPI export PVARs and CVARs that have a bind type \verb+none+. As we shall see in \textbf{Chapter 4}, the need to support variables bound to MPI objects significantly enhances the complexity of the design on the tool side.
 
 \section {Software}
-Our work targets the development of an integrated software infrastructure that enables the use of MPI\_T for performance introspection and online tuning. Here we describe the functionality of the key components and present the applications we used in our study.
+This work targets the development of an integrated software infrastructure that enables the use of MPI\_T for performance introspection and online tuning. Here I describe the functionality of the key software components used in this study.
 \subsection{TAU Performance System$^{\textregistered}$}
 TAU~\cite{Shende:2006:TPP:1125980.1125982} is a comprehensive performance analysis toolkit that offers capabilities to instrument and measure scalable parallel applications on a variety of HPC architecture.
 TAU supports standard programming models including MPI and OpenMP. It can profile and trace MPI applications through the PMPI interface either by linking in the TAU library or through library interposition.
 TAU includes a tool for parallel profile analysis (ParaProf), performance data mining (PerfExplorer), and performance experiment management (TAUdb).
+
 \subsection {CALIPER}
+CALIPER~\cite{CALIPER} is a general purpose application introspection system developed at Lawrence Livermore National Laboratory that relies on source-code annotation for performance data collection. It provides users with a measurement API and a flexible key-value data format for storing performance information, along with a host of \textit{services} that be combined to offer the user a customized performance measurement and analysis solution. Unlike TAU, CALIPER does not offer GUI-based tools for performance analysis. It is designed as a framework rather than a comprehensive toolkit, and it can be integrated with other existing performance tools through CALIPER's tool API to leverage their capabilities.
 
 \subsection{MVAPICH2}
 MVAPICH2~\cite{MVAPICH2} is a cutting-edge open source MPI implementation for high-end computing systems that is based on the MPI 3.1 standard. MVAPICH2 currently supports InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE networking technologies. It offers the user a number of tunable environment parameters and has GPU and MIC optimized versions available.
+
 \subsection{BEACON}
 BEACON (Backplane for Event and Control Notification)~\cite{BEACON} is a communication infrastructure, originally part of the Argo project~\cite{Perarnau:2015:DMM:2960986.2961000}.
 BEACON provides interfaces for sharing event information in a distributed manner, through nodes and enclaves - a group of nodes.
