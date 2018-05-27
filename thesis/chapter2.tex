@@ -6,6 +6,18 @@ In order to address a lack of a standard mechanism to gain insights into, and to
 \textit{Performance variables (PVARs)} can represent internal counters and metrics that can be read, collected and analyzed by an external tool. An example of one such PVAR exported by MVAPICH2 is \verb+mv2_vbuf_total_memory+ which represents the total amount of memory used for internal communication buffers within the library. In a manner similar to CVARs, the interface specifies API's to query and access PVARs. MPI\_T interface allows multiple in-flight performance sessions so it is possible for different tools to \emph{plug into} MPI through this interface. \par
 The MPI\_T interface allows an MPI implementation to export any number of PVARs and CVARs, and it is the responsibility of the tool to discover these through appropriate API calls, and use them correctly. There are no fixed events or variables that MPI implementations must support - complete freedom is granted to the implementation in this regard.
 
+\subsection{Creating a Performance Session}
+In order to use MPI\_T, a tool must first create a \emph{performance session} and associate \emph{handles} for the performance variables and control variables it wishes to read or write. Performance sessions allow the MPI library to distinguish between multiple tools/software modules that may be simultaneously querying the MPI\_T interface.
+
+\subsection{Handle Allocation for PVARs and CVARs}
+Before a tool can read the value of a PVAR (CVAR), it must first allocate a \emph{handle} for the PVAR (CVAR). The MPI\_T interface specifies a function that allows a tool to know the number of PVARs (CVARs) exported by an MPI implementation at any given point in time. Two important points need to be kept in mind when allocating PVAR handles:
+\begin{itemize}
+	\item Number of PVARs (CVARs) can change at runtime: The number of PVARs (CVARs) exported by the library can change at any point during runtime. Typically, MPI libraries export additional PVARs (CVARs) after \verb+MPI_Init+. A tool must be able to support and account for dynamic expansion and invalidation of PVARs (CVARs) at runtime as and when they become available and fall out of scope respectively.
+	\item PVARs (CVARs) can be bound to MPI objects: The \verb+MPI_pvar_get_info+ function returns the \emph{bind} type for the PVAR. The idea here is that PVARs (CVARs) can be \emph{associated} with a specific object such as a communicator or message. As a result, there can be multiple handles allocated for a PVAR (CVAR) at any given index. These handles must be allocated appropriately depending on the bind type. Additional detail regarding bind types shall be provided in \textbf{Chapter 4}.
+\end{itemize}
+
+\par It is worth noting that the only MPI implementation that exports PVARs and CVARs bound to MPI objects is OpenMPI. As of the time of publishing this document, all of the other popular MPI libraries that support MPI\_T --- namely MPICH, MVAPICH2, and Intel MPI export PVARs and CVARs that have a bind type \verb+none+. As we shall see in \textbf{Chapter 4}, the need to support variables bound to MPI objects significantly enhances the complexity of the design on the tool side.
+
 \section {Software}
 Our work targets the development of an integrated software infrastructure that enables the use of MPI\_T for performance introspection and online tuning. Here we describe the functionality of the key components and present the applications we used in our study.
 \subsection{TAU Performance System$^{\textregistered}$}
