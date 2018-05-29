@@ -23,11 +23,8 @@ In \textbf{Chapter 3}, I describe the design of the MPI\_T support in TAU for pe
 \subsection {Design of MPI\_T support in CALIPER}
 In \textbf{Chapter 4}, I describe the design of the MPI\_T support in CALIPER for performance introspection. This work was performed at the Center for Applied Scientific Computing, Lawrence Livermore National Laboratory, during the summer of 2017. CALIPER support was designed specifically for use with OpenMPI~\cite{OpenMPI}. This shall conclude with a description of the unique design challenges encountered while working with OpenMPI.
 
-\subsection {Experiments}
-In \textbf{Chapter 5}, I describe the experiments that were used to validate the design of the MPI\_T support in both TAU and CALIPER. Given the fact that the TAU MPI\_T support is more extensive in its reach, and is the central research theme of this thesis, the experiment section shall largely focus on MPI\_T support in TAU. I also present a study of overheads involved in sampling the MPI\_T interface in TAU and CALIPER at runtime --- this highlights the basic differences in the design approaches of these two tools.
-
 \subsection {Discussion}
-In \textbf{Chapter 6}, I present a discussion focusing on the differences between design and implementation of the MPI\_T support in TAU and CALIPER. Specifically, I focus on describing the differences in performance introspection alone, as CALIPER does not have MPI\_T based performance monitoring or tuning support yet. This discussion shall highlight the advantages and pitfalls of one design methodology over the other, and suggest areas for future work. 
+In \textbf{Chapter 5}, I present a discussion focusing on the differences between design and implementation of the MPI\_T support in TAU and CALIPER. Specifically, I focus on describing the differences in performance introspection alone, as CALIPER does not have MPI\_T based performance monitoring or tuning support yet. This discussion shall highlight the advantages and pitfalls of one design methodology over the other, and suggest areas for future work. 
 
 \subsection {Conclusion and Future Work}
 In the concluding chapter, I shall present some directions for future work with regard to the MPI\_T support in TAU. Specifically, I shall discuss my ongoing research efforts in exploring the potential benefits of enabling extremely fine-grained tuning of MPI point-to-point rendezvous protocols for non-blocking communication at runtime.
