@@ -93,16 +93,27 @@ The basic data unit in Caliper is an attribute. An attribute is a key-value pair
 \end{itemize}
 Apart from creating a Caliper attribute for each PVAR exported, two additional attributes are created for each \textit{watermark class} PVAR exported --- one that represents the number of times the watermark changes, and another that represents the cumulative change in the watermark PVAR.
 
-\section{Querying and storing PVARs}
-In the current design, all PVARs exported by the MPI library are queried when a snapshot is triggered. By integrating the \emph{MPIT} service along with the \emph{MPI} service, this would be useful in determining how various MPI function calls contribute to changes in PVAR values. Moreover, one can gather meaningful information by aggregating using MPI function names or annotated code regions as keys. Currently, we note about 10-15\% overheads in collecting PVARs during every snapshot event. This may not be a very scalable option, as this overhead would increase with a rise in number of PVARs exported.\\
-Depending on the class of the PVAR, we either store the raw value read from the interface in the snapshot, or a derived metric.
+\section{Sampling and Storing PVARs in Snapshots}
+All PVARs exported by the MPI library are queried when a snapshot is triggered. When the MPI service is enabled, snapshots are taken every time an MPI call is made. By integrating the MPI\_T service along with the MPI service, we would be able to determine how various MPI function calls contribute to changes in PVAR values. One can gather meaningful information by aggregating PVAR values using MPI function names or annotated code regions as keys --- this would be particularly helpful in attributing MPI inefficiencies down to source code sections or MPI routines. 
+\par Depending on the class of the PVAR, we either store the raw value read from the interface in the snapshot, or a derived metric. Below, w describe various PVAR classes are represented in the snapshot:
 \begin{itemize}
-	\item \verb+MPI_T_PVAR_CLASS_TIMER+, \verb+MPI_T_PVAR_CLASS_AGGREGATE+, \\\verb+MPI_T_PVAR_CLASS_COUNTERS+: We store the difference between the current value and the "last value" for such PVARs in the snapshot. Storing and aggregating this derived value is more meaningful --- it helps us answer questions such as: How do different MPI functions contribute to this PVAR? Which MPI function is responsible for the highest value?
-	\item \verb+MPI_T_PVAR_CLASS_STATE+, \verb+MPI_T_PVAR_CLASS_SIZE+: These PVARs are stored as is in the snapshot. Perhaps it may be more meaningful to view changes \emph{over time}, such as in a trace.
-	\item \verb+MPI_T_PVAR_CLASS_HIGHWATERMARK+, \verb+MPI_T_PVAR_CLASS_LOWWATERMARK+: Along with storing the raw value for watermark PVARs, we store the derived metrics that represent the number of times the watermark changed, along with how much the watermark changed in the snapshot. By aggregating across MPI functions for example, we can answer questions such as: Which function most frequently pushed up / down a watermark? Which function was responsible for the highest cumulative change in a given watermark?
-	\item \verb+MPI_T_PVAR_CLASS_LEVEL+, \verb+MPI_T_PVAR_CLASS_PERCENTAGE+: We store these PVARs as is in the snapshot. It maybe meaningful to view the average, maximum or minimum value for these PVARs, aggregated across MPI functions.
+	\item \verb+MPI_T_PVAR_CLASS_TIMER+, \verb+MPI_T_PVAR_CLASS_AGGREGATE+, \verb+MPI_T_PVAR_CLASS_COUNTERS+: We store the difference between the current value and the previous for such PVARs in the snapshot. Storing and aggregating this derived value is more meaningful than storing the raw value --- it helps us answer questions such as: 
+ \begin{itemize}
+   \item How do different MPI functions contribute to this PVAR? 
+   \item Which MPI function is responsible for the highest value?
+ \end{itemize}
+	\item \verb+MPI_T_PVAR_CLASS_STATE+, \verb+MPI_T_PVAR_CLASS_SIZE+: The raw values of such PVARs are stored in the snapshot. It may be more meaningful to view changes of these PVARs \emph{over time}, such as in a trace.
+	\item \verb+MPI_T_PVAR_CLASS_HIGHWATERMARK+, \verb+MPI_T_PVAR_CLASS_LOWWATERMARK+: Along with storing the raw value for watermark PVARs, we store the derived metrics that represent the number of times the watermark changed, along with how much the watermark changed in the snapshot. By aggregating across MPI functions for example, we can answer questions such as: 
+ \begin{itemize}
+   \item Which function most frequently pushed up/down a watermark? 
+   \item Which function was responsible for the highest cumulative change in a given watermark?
+ \end{itemize}
+ \item \verb+MPI_T_PVAR_CLASS_LEVEL+, \verb+MPI_T_PVAR_CLASS_PERCENTAGE+: The raw values of such PVARs are stored in the snapshot. It maybe meaningful to view the average, maximum, or minimum value for these PVARs aggregated across MPI functions.
 \end{itemize}
 
-\section {Challenges in implementing MPI\_T in Caliper}
-Use the LLNL slide info.
+\section {Implementation Challenges and Issues}
+\subsection{Crashes with OpenMPI}
+The MPI\_T support in Caliper was designed to be specifically used with the OpenMPI implementation. When this research was being carried out, OpenMPI was the only MPI library that had support for PVARs bound to MPI objects. However, we noted that the application crashed when we were trying to allocate handles for PVARs bound to MPI objects. This issue was communicated to the developers of the OpenMPI library. Unfortunately, this issue was not resolved in time, and we had to use MVAPICH2 for testing purposes.
 
+\subsection{Lack of GUI support in Caliper}
+When this research was being conducted, Caliper did not have GUI support for visualizing profiles, nor did it have support for writing out traces in a standard format. Caliper had basic text-based support for viewing and analyzing the collected performance data. Given the relatively large number of PVARs exported by MVAPICH2 (~100), the basic text-based support was not sufficient to display all the data. We had to resort to viewing only a subset of PVARs at any given time.
