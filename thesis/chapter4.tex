@@ -32,7 +32,7 @@ Caliper \emph{services} are the basic building blocks that can be combined freel
 	\end{figure*}
 \end{center}
 
-\section {MPI\_T Service}
+\section {MPI\_T Service: Supporting Performance Introspection}
 This section describes the design of the MPI\_T service that performs runtime MPI library introspection through the MPI\_T interface. As of the time being, this service does not support performance monitoring or tuning through the MPI\_T interface. 
 \section{Service Registration}
 During the registration phase for the MPI\_T service, the MPI\_T performance session is created. The handles for all the PVARs exported at the time of service registration are allocated. It is important to note that service registration may happen before \verb+MPI_Init+ is invoked. If this is the case, the number of PVARs exported would be zero. The design should account for this scenario.
@@ -94,8 +94,8 @@ The basic data unit in Caliper is an attribute. An attribute is a key-value pair
 Apart from creating a Caliper attribute for each PVAR exported, two additional attributes are created for each \textit{watermark class} PVAR exported --- one that represents the number of times the watermark changes, and another that represents the cumulative change in the watermark PVAR.
 
 \section{Sampling and Storing PVARs in Snapshots}
-All PVARs exported by the MPI library are queried when a snapshot is triggered. When the MPI service is enabled, snapshots are taken every time an MPI call is made. By integrating the MPI\_T service along with the MPI service, we would be able to determine how various MPI function calls contribute to changes in PVAR values. One can gather meaningful information by aggregating PVAR values using MPI function names or annotated code regions as keys --- this would be particularly helpful in attributing MPI inefficiencies down to source code sections or MPI routines. 
-\par Depending on the class of the PVAR, we either store the raw value read from the interface in the snapshot, or a derived metric. Below, w describe various PVAR classes are represented in the snapshot:
+All PVARs exported by the MPI library are queried when a snapshot is triggered. For example, when the MPI service is enabled, snapshots are taken every time an MPI call is made. By integrating the MPI\_T service along with the MPI service, we would be able to determine how various MPI function calls contribute to changes in PVAR values. One can gather meaningful information by aggregating PVAR values using MPI function names or annotated code regions as keys --- this would be particularly helpful in attributing MPI inefficiencies down to source code sections or MPI routines. 
+\par Depending on the class of the PVAR, we either store the raw value read from the interface in the snapshot, or a derived metric. Below, we describe various PVAR classes are represented in the snapshot:
 \begin{itemize}
 	\item \verb+MPI_T_PVAR_CLASS_TIMER+, \verb+MPI_T_PVAR_CLASS_AGGREGATE+, \verb+MPI_T_PVAR_CLASS_COUNTERS+: We store the difference between the current value and the previous for such PVARs in the snapshot. Storing and aggregating this derived value is more meaningful than storing the raw value --- it helps us answer questions such as: 
  \begin{itemize}
@@ -110,6 +110,26 @@ All PVARs exported by the MPI library are queried when a snapshot is triggered. 
  \end{itemize}
  \item \verb+MPI_T_PVAR_CLASS_LEVEL+, \verb+MPI_T_PVAR_CLASS_PERCENTAGE+: The raw values of such PVARs are stored in the snapshot. It maybe meaningful to view the average, maximum, or minimum value for these PVARs aggregated across MPI functions.
 \end{itemize}
+
+\section{Usage Scenarios}
+As of the writing of this document, Caliper only supports performance introspection through the MPI\_T interface, so the set of usage scenarios is limited in variety. The design of the performance introspection support in Caliper was carried out with one specific goal --- to analyze PVAR values \textit{across annotated code sections} using the \textit{aggregate service}.
+\par In other words, we would like \textit{attribute} changes in PVAR values to specific code regions or function invocations. In this way, we hope that MPI\_T would allow us to narrow down performance inefficiencies to specific locations in the source code. The following two usage scenarios are an attempt to showcase this design.
+\subsection{Detecting Performance Inefficiencies in MPI}
+With this use case, we would like to answer this specific question --- What are the contributions of different MPI routines to PVARs that represent an \textit{aggregatable} quantity such as memory allocated within MPI?
+\par Sampling and storing PVARs is likely to be more effective if the context information is stored along with it for analysis later on. If we are able to identify the contributions of various MPI routines to the final sampled value of a PVAR at the end of a run, this could aid in narrowing down causes for performance inefficiencies \textit{within} the MPI library itself. 
+\par As discussed in an earlier section introducing Caliper concepts, \textit{services} act as basic building blocks for realizing more advanced functionality. Below, I briefly discuss the key services that are used to enable such a functionality:
+\subsubsection{Event Service}
+The event trigger service triggers snapshots when attributes are updated. Recall that whenever a snapshot is triggered, the MPI\_T interface is queried. Through the environment variable \verb+CALI_EVENT_TRIGGER+, the user can specify a list of attributes whose updates triggers a snapshot. Attributes that have the \verb+CALI_ATTR_SKIP_EVENTS+ property set do not trigger snapshots. PVAR attributes have this property set to true.
+\subsubsection{MPI Service}
+This service records MPI operations and the MPI rank. This service utilizes the PMPI interface to keep a track of the program execution time spent inside MPI. MPI function names are stored in the special attribute \verb+mpi.function+ and the MPI rank in the \verb+mpi.rank+ attribute.
+\subsubsection{Aggregate Service}
+The aggregate service accumulates aggregation attributes (e.g. time durations) of snapshots with a similar \textit{key}, creating a profile. The environment variable \verb+CALI_AGGREGATE_KEY+ is used to specify the colon-separated list of attributes that for the aggregation key. It is important to note that these attributes can not have the \verb+AS_VALUE+ property set to true. An example of such an attribute would be \verb+mpi.function+ or \verb+mpi.rank+.
+\par Through the environment variable \verb+CALI_AGGREGATE_ATTRIBUTES+, the user can specify the list of aggregation attributes. These attributes must have the \verb+AS_VALUE+ property set to true. All PVARs are candidates for such attributes. The aggregate service aggregates values of aggregation attributes from all input snapshots with similar aggregation keys.
+\subsubsection{Report Service}
+The report service aggregates, formats, and writes collected Caliper records into files or stdout on Caliper flush events (typically, at program end). By default, the report service prints a tabular, human-readable report of the collected snapshots.
+
+\section{Target Applications}
+\section{Experiments}
 
 \section {Implementation Challenges and Issues}
 \subsection{Crashes with OpenMPI}
