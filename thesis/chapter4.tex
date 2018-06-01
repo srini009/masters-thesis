@@ -136,11 +136,25 @@ The report service aggregates, formats, and writes collected Caliper records int
 	\begin{figure*}[tbp!]
          \centering
 		\includegraphics[scale=0.8, width=\columnwidth, height=3cm]{figures/CALIPER_MPI_counter_PVAR}
-		\caption{MPI Counter PVAR}
+		\caption{PVAR Aggregated Across MPI Routines}
 		\label{fig:cali-counter}
 	\end{figure*}
 \end{center}
 
+\subsection{Detecting Application-Level Performance Inefficiences}
+Consider the situation where an MPI application developer has optimized the MPI implementation to a level where further optimization yields diminishing returns. In spite of having an optimized MPI library, the application may be using a sub-optimal combination of MPI routines in order to execute a specific task. One simple example is the use of point-to-point routines to implement collectives, instead of the highly optimized, library-supplied collective routines. Assuming that the user is aware of the specific PVARs to analyze to detect such a scenario but unaware of the specific code locations in the application where such an inefficiency exists, we need a way to associate PVARs to specific code locations (or routines).
+\par With an application that has been annotated using Caliper (such as the LULESH application used in our study), this goal is easy to achieve. The set of services is identical to the previously described usage scenario with two important changes. One, we now trigger the snapshots from every annotated source function (instead of every MPI call invocation). It is assumed that an attribute with the name \verb+function+ is created for annotating the source code. Each time a function call is made, the value of this attribute is updated with the name of the function being invoked. Naturally, this attribute would have stacking semantics. Two, the aggregation key contains the attribute \verb+function+. This way, we can see how different application-level functions contribute to the value of the PVARs. 
+\par Figure \ref{fig:cali-app-counter} is a screenshot of the Caliper profile generated for the LULESH application using this setup. The PVAR \verb+num_free_calls+ is aggregated across application-level routines. It is evident that the \verb+CalcQForElems+ and the \verb+CalcForceForNodes+ routines were responsible for a large share of the final sampled value for this PVAR. By annotating the source code appropriately, one could use this setup to narrow down inefficiencies to specific loops or even line numbers.
+
+\par Although the two usage scenarios presented above are similar with respect to the set of services used, the MPI\_T sampling overheads involved vary significantly. I shall present these results in the following section.
+\begin{center}
+	\begin{figure*}[bp!]
+         \centering
+		\includegraphics[scale=0.8, width=\columnwidth, keepaspectratio]{figures/CALIPER_app_counter_PVAR}
+		\caption{PVAR Aggregated Across Application Routines}
+		\label{fig:cali-app-counter}
+	\end{figure*}
+\end{center}
 \section{Target Applications}
 \section{Experiments}
 
