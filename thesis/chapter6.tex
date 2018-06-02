@@ -1,10 +1,9 @@
 \chapter{Conclusion and Future Work}
 \section{Conclusion}
-This paper presented an infrastructure dedicated to MPI Performance Engineering, enabling introspection of MPI runtimes.
-To serve that purpose, our infrastructure utilized the MPI Tools Information Interface, introduced in the MPI 3.0 standard.
-We gathered existing components --- namely the TAU Performance System and MVAPICH2 and extended them to fully exploit features offered by MPI\_T.
-We demonstrated different usage scenarios based on specific sets of MPI\_T Performance and Control Variables exported by MVAPICH2.
-The results produced by our experiments on a combination of synthetic and production applications validate our approach, and open broad perspectives for future research.
+This documented presented an infrastructure dedicated to MPI Performance Engineering, enabling introspection of MPI runtimes.
+To serve that purpose, this infrastructure utilized the MPI Tools Information Interface, introduced in the MPI 3.0 standard.
+\par With TAU, we gathered existing components --- namely the TAU Performance System and MVAPICH2 and extended them to fully exploit features offered by MPI\_T. We demonstrated different usage scenarios based on specific sets of MPI\_T Performance and Control Variables exported by MVAPICH2. The results produced by our experiments on a combination of synthetic and production applications validate our approach and open broad perspectives for future research.
+\par With Caliper, I presented an infrastructure that enables performance introspection through MPI\_T. As compared to TAU, I chose to experiment with a different strategy to sample PVARs. I demonstrated how this strategy could lead to a more meaningful way to analyze PVARs, even if the overheads associated with this strategy were high.
 \section{Future Work}
 We plan to enrich our infrastructure by exploring the following areas of research:
 \begin{itemize}
