@@ -1,18 +1,11 @@
 \chapter{Conclusion and Future Work}
-\section {Discussion}
-
-MPI\_T allows a performance profiler such as TAU to play a more active role in MPI performance engineering. As we have demonstrated with experiments on AmberMD, SNAP, and 3DStencil, there can be significant memory savings in tracking and freeing unused virtual buffers inside MVAPICH2. Such opportunities for fine-tuning MPI library behavior would not have been possible without a close interaction between this two software.  \par
-By integrating BEACON and PYCOOLR into our infrastructure, we offer the capability of online monitoring to users who may be interested in tracking performance variables while the application is running. The user can also issue CVAR updates through the PYCOOLR GUI and monitor the impact of modifying CVARs. We envision this scenario to be part of an experimentation phase in the performance engineering process, where the user determines the right settings for an application. \par
-However, it may not always be possible or desirable for the user to directly intervene in the performance tuning process. For example, during the process of freeing unused VBUFs, different processes may display different levels of VBUF usage and will require different values for the CVAR \\ \verb+MPIR_CVAR_VBUF_POOL_REDUCED_VALUE+. In such a situation, a more viable option is to have an external software perform the tuning based on a user-defined policy. The plugin infrastructure support inside TAU offers a clean design for developing customized performance tuning policies through MPI\_T. This is one step toward enabling complete autotuning of MPI applications. Expert knowledge gathered through monitoring and manual tuning enabled by BEACON can eventually become part of the autotuning and recommendation engines enabled by the plugin infrastructure.  \par
-One of the challenges we want to address in the future lies in developing autotuning policies to cover a wider class of applications --- multi-phased applications in the climate modeling, computational fluid dynamics, and geophysics domains. Accordingly, we would need to enrich MVAPICH2 to support additional PVARs and CVARs of interest. Providing the user with a more interactive performance engineering functionality is another area we would like to further explore.
-
-\section{Conclusion and Future Work}
-
+\section{Conclusion}
 This paper presented an infrastructure dedicated to MPI Performance Engineering, enabling introspection of MPI runtimes.
 To serve that purpose, our infrastructure utilized the MPI Tools Information Interface, introduced in the MPI 3.0 standard.
 We gathered existing components --- namely the TAU Performance System and MVAPICH2 and extended them to fully exploit features offered by MPI\_T.
 We demonstrated different usage scenarios based on specific sets of MPI\_T Performance and Control Variables exported by MVAPICH2.
-The results produced by our experiments on a combination of synthetic and production applications validate our approach, and open broad perspectives for future research. \par
+The results produced by our experiments on a combination of synthetic and production applications validate our approach, and open broad perspectives for future research.
+\section{Future Work}
 We plan to enrich our infrastructure by exploring the following areas of research:
 \begin{itemize}
 	\item Develop an infrastructure to express autotuning policies in a more generic fashion
