@@ -11,6 +11,7 @@ Caliper provides a generic \textit{key-value} data model for storing performance
 \begin{center}
 	\begin{figure*}[tbp!]
          \centering
+  \captionsetup{justification=centering}
 		\includegraphics[scale=0.3, width=\columnwidth, keepaspectratio]{figures/cali-example}
 		\caption{Caliper~\cite{CALIPER} Annotated Source Code}
 		\label{fig:caliexample}
@@ -26,6 +27,7 @@ Caliper \emph{services} are the basic building blocks that can be combined freel
 \begin{center}
 	\begin{figure*}[bp!]
          \centering
+  \captionsetup{justification=centering}
 		\includegraphics[scale=0.7, keepaspectratio]{figures/cali-services}
 		\caption{MPI Profiling: Caliper~\cite{CALIPER} Service Flow}
 		\label{fig:caliservices}
@@ -140,6 +142,7 @@ The report service aggregates, formats, and writes collected Caliper records int
 \begin{center}
 	\begin{figure*}[tbp!]
          \centering
+  \captionsetup{justification=centering}
 		\includegraphics[scale=0.8, width=\columnwidth, height=3cm]{figures/CALIPER_MPI_counter_PVAR}
 		\caption{PVAR Aggregated Across MPI Routines}
 		\label{fig:cali-counter}
@@ -155,6 +158,7 @@ Consider the situation where an MPI application developer has optimized the MPI 
 \begin{center}
 	\begin{figure*}[bp!]
          \centering
+  \captionsetup{justification=centering}
 		\includegraphics[scale=0.8, width=\columnwidth, keepaspectratio]{figures/CALIPER_app_counter_PVAR}
 		\caption{PVAR Aggregated Across Application Routines}
 		\label{fig:cali-app-counter}
@@ -162,6 +166,44 @@ Consider the situation where an MPI application developer has optimized the MPI 
 \end{center}
 
 \section{Experiments}
+In this section, I present results from a study focused on determining the sampling overheads for the MPI\_T support in Caliper.
+\subsection{Experimental Setup}
+All the experiments with LULESH were carried out on Quartz --- a 2600-node cluster at LLNL. Each node has two Intel Xeon E5-2695 18-core processors, providing a total of 36 cores and 128 GB of main memory per node. All our experiments were run using 27 MPI processes on one Quartz node --- a single node was sufficient for studying sampling overheads. In order to prevent performance variation between runs, the MPI processes were pinned to cores by setting \verb+MV2_ENABLE_AFFINITY+ to true. Each experiment was performed three times, and the runtime reported here is the averaged value. Two MVAPICH2 versions were used in this study --- MVAPICH2 version 2.3b and MVAPICH2 version 2.3rc2. 
+\subsection{Results}
+\subsubsection{Overhead in Enabling MPI\_T}
+We first study how overheads vary when the number of PVARs exported by the MPI implementation differs. MVAPICH2 version 2.3b exports 73 PVARs, while MVAPICH2 version 2.3rc2 exports 402 PVARs. For this experiment, snapshots were triggered (and MPI\_T subsequently sampled for \textit{all} PVARs) whenever an MPI call was made. We define the following terms:
+\begin{itemize}
+\item \textbf{Baseline} --- Caliper-annotated LULESH profiled without any services enabled
+\item \textbf{Without MPI\_T} --- Caliper-annotated LULESH profiled with the MPI, report, timestamp, aggregate, and event services enabled
+\item \textbf{With MPI\_T} --- Caliper-annotated LULESH profiled with the MPI, MPI\_T, report, timestamp, aggregate, and event services enabled
+\end{itemize}
+Figure \ref{fig:cali-overhead-version} depicts an expected outcome --- the overheads are directly proportional to the number of PVARs exported. For MVAPICH2 version 2.3b, this corresponds to overheads of 76\% over the baseline, whereas for MVAPICH2 version 2.3rc2, overheads are 143\% over the corresponding baseline. None of these numbers are in an acceptable range --- this suggests that it is too expensive to sample \textit{all} PVARs, every time an MPI call is made.
+\begin{center}
+	\begin{figure*}[bp!]
+         \centering
+  \captionsetup{justification=centering}
+		\includegraphics[scale=0.8, width=\columnwidth, keepaspectratio]{figures/CALIPER_overheads_version}
+		\caption{LULESH --- Variation of MPI\_T Overhead with Number of PVARs Exported}
+		\label{fig:cali-overhead-version}
+	\end{figure*}
+\end{center}
+
+\par As alluded to in the section on usage scenarios, the snapshot-triggering mechanism has a significant impact on the MPI\_T sampling overheads. Specifically, we consider two situations:
+\begin{itemize}
+\item Snapshots triggered when an MPI call is made
+\item Snapshots triggered when a Caliper-annotated application routine is invoked
+\end{itemize}
+For this experiment, the MVAPICH2 version 2.3rc2 was used. Figure \ref{fig:cali-overhead-snapshot} suggests that the overheads involved in triggering a snapshot and sampling MPI\_T from application-level routines are even higher than the situation where snapshots are triggered every time an MPI call is made. Specifically, we see overheads of 207\% when triggering snapshots from application-level routines, and overheads of 143\% when triggering snapshots from MPI routines. 
+\par This is a sobering result --- even when the level of application instrumentation is low-to-moderate (such as in LULESH), MPI\_T sampling overheads are not acceptable. This would likely be the case in other scientific applications that are iterative (or depend on a timestep loop). A compromise solution in this situation may be to sample only a subset of PVARs --- perhaps by providing the user an environment variable to specify such a subset. But such a solution assumes that the user is already aware of the exact names (or indices) of the PVARs --- this is a poor assumption to make in the context of MPI\_T.
+\begin{center}
+	\begin{figure*}[bp!]
+         \centering
+  \captionsetup{justification=centering}
+		\includegraphics[scale=0.8, width=\columnwidth, keepaspectratio]{figures/CALIPER_overheads_snapshot_trigger}
+		\caption{LULESH --- Variation of MPI\_T Overhead with Snapshot Trigger Mechanism}
+		\label{fig:cali-overhead-snapshot}
+	\end{figure*}
+\end{center}
 
 \section {Implementation Challenges and Issues}
 \subsection{Crashes with OpenMPI}
