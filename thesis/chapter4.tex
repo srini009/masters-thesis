@@ -111,6 +111,11 @@ All PVARs exported by the MPI library are queried when a snapshot is triggered. 
  \item \verb+MPI_T_PVAR_CLASS_LEVEL+, \verb+MPI_T_PVAR_CLASS_PERCENTAGE+: The raw values of such PVARs are stored in the snapshot. It maybe meaningful to view the average, maximum, or minimum value for these PVARs aggregated across MPI functions.
 \end{itemize}
 
+\section{Target Applications}
+\subsection{LULESH}
+LULESH~\cite{LULESH} is a mini-app developed at the Lawrence Livermore National Laboratory (LLNL). It is a typical hydrocode, and approximates the hydrodynamics equations discretely. LULESH has been ported to multiple platforms and programming models. In this study, we use the CPU-only version that uses MPI for parallelization. We use an LLNL-internal version of LULESH that has been annotated using Caliper. Specifically, all MPI functions along with some important application-level routines and loops are annotated using Caliper.
+\par Due to restricted access to Caliper-annotated applications, our study has been limited to only one application.
+
 \section{Usage Scenarios}
 As of the writing of this document, Caliper only supports performance introspection through the MPI\_T interface, so the set of usage scenarios is limited in variety. The design of the performance introspection support in Caliper was carried out with one specific goal --- to analyze PVAR values \textit{across annotated code sections} using the \textit{aggregate} service.
 \par In other words, we would like to \textit{attribute} changes in PVAR values to specific code regions or function invocations. In this way, we hope that MPI\_T would allow us to narrow down performance inefficiencies to specific locations in the source code. The following two usage scenarios are an attempt to showcase this design.
@@ -155,7 +160,7 @@ Consider the situation where an MPI application developer has optimized the MPI 
 		\label{fig:cali-app-counter}
 	\end{figure*}
 \end{center}
-\section{Target Applications}
+
 \section{Experiments}
 
 \section {Implementation Challenges and Issues}
