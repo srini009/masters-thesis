@@ -205,9 +205,12 @@ For this experiment, the MVAPICH2 version 2.3rc2 was used. Figure \ref{fig:cali-
 	\end{figure*}
 \end{center}
 
-\section {Implementation Challenges and Issues}
+\section{Implementation Challenges and Issues}
 \subsection{Crashes with OpenMPI}
 The MPI\_T support in Caliper was designed to be specifically used with the OpenMPI implementation. When this research was being carried out, OpenMPI was the only MPI library that had support for PVARs bound to MPI objects. However, we noted that the application crashed when we were trying to allocate handles for PVARs bound to MPI objects. This issue was communicated to the developers of the OpenMPI library. Unfortunately, this issue was not resolved in time, and we had to use MVAPICH2 for testing purposes.
 
 \subsection{Lack of GUI support in Caliper}
 When this research was being conducted, Caliper did not have GUI support for visualizing profiles, nor did it have support for writing out traces in a standard format. Caliper had basic text-based support for viewing and analyzing the collected performance data. Given the relatively large number of PVARs exported by MVAPICH2 (~100), the basic text-based support was not sufficient to display all the data. We had to resort to viewing only a subset of PVARs at any given time.
+
+\section{Bridge}
+This chapter has described the design and implementation of the MPI\_T support in Caliper. Through experiments, we have demonstrated the capabilities and limitations of the performance introspection support in Caliper. In the next chapter, we shall present a discussion focusing on the design differences between the MPI\_T support in TAU and Caliper. 
