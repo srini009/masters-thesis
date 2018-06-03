@@ -508,6 +508,7 @@ Title: \@abstracttitle\\*[\baselineskip]
                 \interlinepenalty=\@M}
 \cvitem{PROFESSIONAL EXPERIENCE}{\@experience}
 \cvitem{GRANTS, AWARDS, AND HONORS}{\@awards} 
+\cvitem{PUBLICATIONS}{\@publications} 
 \par
 \end{singlespacing}}
 
