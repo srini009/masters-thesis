@@ -507,7 +507,7 @@ Title: \@abstracttitle\\*[\baselineskip]
 \hangindent=\@cvhangindent
                 \interlinepenalty=\@M}
 \cvitem{PROFESSIONAL EXPERIENCE}{\@experience}
-%%\cvitem{GRANTS, AWARDS, AND HONORS}{\@awards} 
+\cvitem{GRANTS, AWARDS, AND HONORS}{\@awards} 
 \par
 \end{singlespacing}}
 
