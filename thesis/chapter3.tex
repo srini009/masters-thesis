@@ -38,7 +38,7 @@ ParaProf is the TAU component that allows the user to view and analyze the colle
         \begin{figure*}[tbp!]
         \centering
                 \includegraphics[scale=0.35,keepaspectratio]{figures/Online_Monitoring_Design}
-                \caption{Online Monitoring with BEACON/PYCOOLR}
+                \caption{Online monitoring with BEACON/PYCOOLR}
                 \label{fig:onlinemonitoringdesign}
         \end{figure*}
 \end{center}
@@ -52,7 +52,7 @@ Complementary to providing an API for runtime introspection, the MPI\_T interfac
         \begin{figure*}[tbp!]
         \centering
                 \includegraphics[scale=0.4,keepaspectratio]{figures/Manual_Tuning_Design}
-                \caption{User-Guided Tuning with BEACON/PYCOOLR}
+                \caption{User-guided tuning with BEACON/PYCOOLR}
                 \label{fig:manualtuning}
         \end{figure*}
 \end{center}
@@ -103,7 +103,7 @@ Figure \ref{fig:plugininfrastructure} depicts TAU plugins in the context of our 
         \begin{figure*}[tbp!]
          \centering
                 \includegraphics[scale=0.5,width=\columnwidth,keepaspectratio]{figures/Plugin_Infrastructure}
-                \caption{Plugin Infrastructure}
+                \caption{Plugin infrastructure}
                 \label{fig:plugininfrastructure}
         \end{figure*}
 \end{center}
@@ -164,7 +164,7 @@ When we increase the value of the \emph{Eager} limit specified by \verb+MPIR_CVA
   \centering
   \captionsetup{justification=centering}
   \includegraphics[scale=1.0,width=\columnwidth,keepaspectratio]{figures/Overlap-after}
-         \caption{Vampir summary process timeline view of 3DStencil after Eager threshold tuning: Increased time spent in user code}
+         \caption{Vampir summary process timeline view of 3DStencil after Eager threshold tuning: increased time spent in user code}
  \label{fig:aftereager}
  \end{figure*}
 
@@ -216,7 +216,7 @@ We noted that increasing the \emph{Eager} threshold from the MVAPICH2 default va
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{AmberMD - Impact of Eager threshold and autotuning on execution time and memory usage}
+  \caption{AmberMD: Impact of Eager threshold and autotuning on execution time and memory usage}
   \label{tab:Amber}
   \resizebox{\columnwidth}{!}{\begin{tabular}{|c|c|c|c|c|l|}
     \toprule
@@ -245,7 +245,7 @@ The TAU autotuning plugin ensures that VBUFs from unused pools are freed to offs
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{SNAP - Aggregate time inside various MPI functions (top five by total time)}
+  \caption{SNAP: Aggregate time inside various MPI functions (top five by total time)}
   \label{tab:SNAP_profile}
   \resizebox{\columnwidth}{!}{\begin{tabular}{|c|c|c|l|}
     \toprule
@@ -264,7 +264,7 @@ The TAU autotuning plugin ensures that VBUFs from unused pools are freed to offs
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{SNAP - Average sent message sizes from various MPI functions (top five by message count)}
+  \caption{SNAP: Average sent message sizes from various MPI functions (top five by message count)}
   \label{tab:SNAP_message_sizes}
   \resizebox{0.80\columnwidth}{!}{\begin{tabular}{|c|c|c|l|}
     \toprule
@@ -283,7 +283,7 @@ The TAU autotuning plugin ensures that VBUFs from unused pools are freed to offs
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{SNAP - Impact of Eager threshold and autotuning on execution time and memory usage}
+  \caption{SNAP: Impact of Eager threshold and autotuning on execution time and memory usage}
   \label{tab:SNAP}
   \resizebox{\columnwidth}{!}{\begin{tabular}{|c|c|c|c|l|}
     \toprule
@@ -304,7 +304,7 @@ It is important to note that the actual amount of memory freed through the autot
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{3DStencil - Impact of Eager threshold and autotuning on execution time and memory usage}
+  \caption{3DStencil: Impact of Eager threshold and autotuning on execution time and memory usage}
   \label{tab:3DStencil}
   \resizebox{\columnwidth}{!}{\begin{tabular}{|c|c|c|c|c|c|l|}
     \toprule
@@ -323,7 +323,7 @@ Table \ref{tab:MiniAMR} summarizes the results of enabling SHArP for MiniAMR. Bo
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{MiniAMR - Impact of hardware offloading on application runtime}
+  \caption{MiniAMR: Impact of hardware offloading on application runtime}
   \label{tab:MiniAMR}
   \resizebox{0.65\columnwidth}{!}{\begin{tabular}{|c|c|l|}
     \toprule
@@ -348,7 +348,7 @@ In our first set of experiments, we sought to quantify the cost of enabling MPI\
         \begin{figure*}[tbp!]
                  \includegraphics[width=\columnwidth,keepaspectratio,scale=1.0]{figures/MPI_T_Overheads}
                 \captionsetup{justification=centering}
-                  \caption{Overhead in Enabling MPI\_T for 3DStencil}
+                  \caption{Overhead in enabling MPI\_T for 3DStencil}
                    \label{fig:overheads}
         \end{figure*}
 \end{center}
