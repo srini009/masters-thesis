@@ -20,7 +20,7 @@ Before a tool can read the value of a PVAR (CVAR), it must first allocate a \emp
 
 \section {Software}
 This work targets the development of an integrated software infrastructure that enables the use of MPI\_T for performance introspection and online tuning. Here I describe the functionality of the key software components used in this study.
-\subsection{TAU Performance System$^{\textregistered}$}
+\subsection{TAU Performance System$^{\tiny{\textregistered}}$}
 TAU~\cite{Shende:2006:TPP:1125980.1125982} is a comprehensive performance analysis toolkit that offers capabilities to instrument and measure scalable parallel applications on a variety of HPC architecture.
 TAU supports standard programming models including MPI and OpenMP. It can profile and trace MPI applications through the PMPI interface either by linking in the TAU library or through library interposition.
 TAU includes a tool for parallel profile analysis (ParaProf), performance data mining (PerfExplorer), and performance experiment management (TAUdb).
@@ -78,9 +78,7 @@ To the best of our knowledge, there exists no prior work of autotuning MPI runti
 
 \subsection{Policy Engine for Performance Tuning}
 
-Outside the scope of MPI, Huck et al. describe APEX~\cite{Huck:2013:EPA:2491661.2481434}, the \textit{Autonomic Performance Environment for eXascale}.
-APEX ships with TAU, and is part of the XPRESS project, which includes a parallel programming model named OpenX, and a runtime implementing this model, HPX.
-Working on top of HPX, APEX provides runtime introspection and includes a policy engine introduced as a core feature: the policies are rules deciding the outcome based on observed states of APEX.
+Outside the scope of MPI, APEX~\cite{Huck:2013:EPA:2491661.2481434} was developed as a part of the XPRESS project, which includes a parallel programming model named OpenX, and a runtime implementing this model, HPX. APEX provides runtime introspection and includes a policy engine introduced as a core feature: the policies are rules deciding the outcome based on observed states of APEX.
 These rules can thus change the behavior of the runtime --- such as changing task granularity, triggering data movements or repartitioning.
 
 \section{Bridge}
