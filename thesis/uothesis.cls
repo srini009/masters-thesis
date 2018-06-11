@@ -521,14 +521,27 @@ Title: \@abstracttitle\\*[\baselineskip]
 \@makevita
 \@makeackpage
 \@makededpage
+  \begin{singlespacing}
+    \clearpage
+    \@tableofcontents
+    \ifnofigures\else
+    \IfFileExists{\jobname.\ext@figure}{\@listoffigures}{\@starttoc{\ext@figure}}
+    \fi
+    \ifnotables\else
+    \IfFileExists{\jobname.\ext@table}{\@listoftables}{\@starttoc{\ext@table}}
+    \fi
+    \clearpage
+    \@normalheaderdims
+    \clearpage
+  \end{singlespacing}}
 
-\clearpage
-\@tableofcontents
+%%\clearpage This was edited out by Srinivasan. Roscoe had removed listoftables and listoffigures
+%%\@tableofcontents
 
-\clearpage
-\@normalheaderdims
-\clearpage
-\end{singlespacing}}
+%%\clearpage
+%%\@normalheaderdims
+%%\clearpage
+%%\end{singlespacing}}
 
 \def\@makedraftcover{
 \clearpage
