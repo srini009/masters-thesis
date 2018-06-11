@@ -168,7 +168,7 @@ Consider the situation where an MPI application developer has optimized the MPI 
 \section{Experiments}
 In this section, I present results from a study focused on determining the sampling overheads for the MPI\_T support in Caliper.
 \subsection{Experimental Setup}
-All the experiments with LULESH were carried out on Quartz --- a 2600-node cluster at LLNL. Each node has two Intel Xeon E5-2695 18-core processors, providing a total of 36 cores and 128 GB of main memory. All our experiments were run using 27 MPI processes on one Quartz node --- a single node was sufficient for studying sampling overheads. In order to prevent performance variation between runs, the MPI processes were pinned to cores by setting \verb+MV2_ENABLE_AFFINITY+ to true. Each experiment was performed three times, and the runtime reported here is the averaged value. Two MVAPICH2 versions were used in this study --- MVAPICH2 version 2.3b and MVAPICH2 version 2.3rc2\footnote{http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz}. 
+All the experiments with LULESH were carried out on Quartz --- a 2600-node cluster at LLNL. Each node has two Intel Xeon E5-2695 18-core processors, providing a total of 36 cores and 128 GB of main memory. All our experiments were run using 27 MPI processes on one Quartz node --- a single node was sufficient for studying sampling overheads. In order to prevent performance variation between runs, the MPI processes were pinned to cores by setting \verb+MV2_ENABLE_AFFINITY+ to true. Each experiment was performed three times, and the runtime reported here is the averaged value. Two MVAPICH2 versions were used in this study --- MVAPICH2 version 2.3b and MVAPICH2 version 2.3rc2. 
 \subsection{Results}
 \subsubsection{Overhead in Enabling MPI\_T}
 We first study how overheads vary when the number of PVARs exported by the MPI implementation differs. MVAPICH2 version 2.3b exports 73 PVARs, while MVAPICH2 version 2.3rc2 exports 402 PVARs. For this experiment, snapshots were triggered (and MPI\_T subsequently sampled for \textit{all} PVARs) whenever an MPI call was made. We define the following terms:
@@ -212,5 +212,5 @@ The MPI\_T support in Caliper was designed to be specifically used with the Open
 \subsection{Lack of GUI support in Caliper}
 When this research was being conducted, Caliper did not have GUI support for visualizing profiles, nor did it have support for writing out traces in a standard format. Caliper had basic text-based support for viewing and analyzing the collected performance data. Given the relatively large number of PVARs exported by MVAPICH2 (order of a 100), the basic text-based support was not sufficient to display all the data. We had to resort to viewing only a subset of PVARs at any given time.
 
-\section{Bridge}
+\section{Summary}
 This chapter has described the design and implementation of the MPI\_T support in Caliper. Through experiments, we have demonstrated the capabilities and limitations of the performance introspection support in Caliper. In the next chapter, we shall present a discussion focusing on the design differences between the MPI\_T support in TAU and Caliper. 

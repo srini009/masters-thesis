@@ -22,14 +22,14 @@ Before a tool can read the value of a PVAR (CVAR), it must first allocate a \emp
 This work targets the development of an integrated software infrastructure that enables the use of MPI\_T for performance introspection and online tuning. Here I describe the functionality of the key software components used in this study.
 \subsection{TAU Performance System$^{\tiny{\textregistered}}$}
 TAU~\cite{Shende:2006:TPP:1125980.1125982} is a comprehensive performance analysis toolkit that offers capabilities to instrument and measure scalable parallel applications on a variety of HPC architecture.
-TAU supports standard programming models including MPI and OpenMP. It can profile and trace MPI applications through the PMPI interface either by linking in the TAU library or through library interposition.
+TAU\footnote{http://tau.uoregon.edu} supports standard programming models including MPI and OpenMP. It can profile and trace MPI applications through the PMPI interface either by linking in the TAU library or through library interposition.
 TAU includes a tool for parallel profile analysis (ParaProf), performance data mining (PerfExplorer), and performance experiment management (TAUdb).
 
 \subsection {Caliper}
-Caliper~\cite{CALIPER} is a general purpose application introspection system developed at Lawrence Livermore National Laboratory that relies on source-code annotation for performance data collection. It provides users with a measurement API and a flexible key-value data format for storing performance information, along with a host of \textit{services} that be combined to offer the user a customized performance measurement and analysis solution. Unlike TAU, Caliper does not offer GUI-based tools for performance analysis. It is designed as a framework rather than a comprehensive toolkit, and it can be integrated with other existing performance tools through Caliper's tool API to leverage their capabilities.
+Caliper~\cite{CALIPER}\footnote{https://github.com/LLNL/Caliper} is a general purpose application introspection system developed at Lawrence Livermore National Laboratory that relies on source-code annotation for performance data collection. It provides users with a measurement API and a flexible key-value data format for storing performance information, along with a host of \textit{services} that be combined to offer the user a customized performance measurement and analysis solution. Unlike TAU, Caliper does not offer GUI-based tools for performance analysis. It is designed as a framework rather than a comprehensive toolkit, and it can be integrated with other existing performance tools through Caliper's tool API to leverage their capabilities.
 
 \subsection{MVAPICH2}
-MVAPICH2~\cite{MVAPICH2} is a cutting-edge open source MPI implementation for high-end computing systems that is based on the MPI 3.1 standard. MVAPICH2 currently supports InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE networking technologies. It offers the user a number of tunable environment parameters and has GPU and MIC optimized versions available.
+MVAPICH2~\cite{MVAPICH2}\footnote{http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz} is a cutting-edge open source MPI implementation for high-end computing systems that is based on the MPI 3.1 standard. MVAPICH2 currently supports InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE networking technologies. It offers the user a number of tunable environment parameters and has GPU and MIC optimized versions available.
 
 \subsection{BEACON}
 BEACON (Backplane for Event and Control Notification)~\cite{BEACON} is a communication infrastructure, originally part of the Argo project~\cite{Perarnau:2015:DMM:2960986.2961000}.
@@ -81,5 +81,5 @@ To the best of our knowledge, there exists no prior work of autotuning MPI runti
 Outside the scope of MPI, APEX~\cite{Huck:2013:EPA:2491661.2481434} was developed as a part of the XPRESS project, which includes a parallel programming model named OpenX, and a runtime implementing this model, HPX. APEX provides runtime introspection and includes a policy engine introduced as a core feature: the policies are rules deciding the outcome based on observed states of APEX.
 These rules can thus change the behavior of the runtime --- such as changing task granularity, triggering data movements or repartitioning.
 
-\section{Bridge}
+\section{Summary}
 This chapter has described the background concepts, prior work, and software used in our study. The next chapter shall focus on describing the design of the MPI\_T support in TAU.
