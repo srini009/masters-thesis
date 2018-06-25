@@ -156,7 +156,7 @@ When we increase the value of the \emph{Eager} limit specified by \verb+MPIR_CVA
   \centering
   \captionsetup{justification=centering}
   \includegraphics[scale=1.0,width=\columnwidth,keepaspectratio]{figures/Overlap-before}
-         \caption{Vampir summary process timeline view of 3DStencil before Eager threshold tuning}
+         \caption{3DStencil: Vampir summary process timeline view before Eager tuning}
  \label{fig:beforeeager}
  \end{figure*}
 
@@ -164,7 +164,7 @@ When we increase the value of the \emph{Eager} limit specified by \verb+MPIR_CVA
   \centering
   \captionsetup{justification=centering}
   \includegraphics[scale=1.0,width=\columnwidth,keepaspectratio]{figures/Overlap-after}
-         \caption{Vampir summary process timeline view of 3DStencil after Eager threshold tuning: increased time spent in user code}
+         \caption{3DStencil: Vampir summary process timeline view after Eager tuning}
  \label{fig:aftereager}
  \end{figure*}
 
@@ -216,7 +216,7 @@ We noted that increasing the \emph{Eager} threshold from the MVAPICH2 default va
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{AmberMD: Impact of Eager threshold and autotuning on execution time and memory usage}
+  \caption{AmberMD: Impact of Eager threshold and autotuning}
   \label{tab:Amber}
   \resizebox{\columnwidth}{!}{\begin{tabular}{|c|c|c|c|c|l|}
     \toprule
@@ -283,7 +283,7 @@ The TAU autotuning plugin ensures that VBUFs from unused pools are freed to offs
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{SNAP: Impact of Eager threshold and autotuning on execution time and memory usage}
+  \caption{SNAP: Impact of Eager threshold and autotuning}
   \label{tab:SNAP}
   \resizebox{\columnwidth}{!}{\begin{tabular}{|c|c|c|c|l|}
     \toprule
@@ -304,7 +304,7 @@ It is important to note that the actual amount of memory freed through the autot
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{3DStencil: Impact of Eager threshold and autotuning on execution time and memory usage}
+  \caption{3DStencil: Impact of Eager threshold and autotuning}
   \label{tab:3DStencil}
   \resizebox{\columnwidth}{!}{\begin{tabular}{|c|c|c|c|c|c|l|}
     \toprule
