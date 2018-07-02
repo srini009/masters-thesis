@@ -53,7 +53,7 @@ It is possible that multiple handles are associated with a PVAR bound to an MPI 
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{Caliper: PVAR handle allocation routines for supported MPI object types}
+  \caption{Caliper: PVAR handle allocation routines for supported MPI objects}
   \label{tab:caliperhandles}
   \resizebox{0.65\columnwidth}{!}{\begin{tabular}{|c|l|}
     \toprule
@@ -182,7 +182,7 @@ Figure \ref{fig:cali-overhead-version} depicts an expected outcome --- the overh
          \centering
   \captionsetup{justification=centering}
 		\includegraphics[scale=0.8, width=\columnwidth, keepaspectratio]{figures/CALIPER_overheads_version}
-		\caption{LULESH: Variation of MPI\_T overhead with number of PVARs exported}
+		\caption{Effect of number of PVARs exported on MPI\_T overhead}
 		\label{fig:cali-overhead-version}
 	\end{figure*}
 \end{center}
@@ -199,7 +199,7 @@ For this experiment, the MVAPICH2 version 2.3rc2 was used. Figure \ref{fig:cali-
          \centering
   \captionsetup{justification=centering}
 		\includegraphics[scale=0.8, width=\columnwidth, keepaspectratio]{figures/CALIPER_overheads_snapshot_trigger}
-		\caption{LULESH: Variation of MPI\_T overhead with snapshot trigger mechanism}
+		\caption{Effect of snapshot trigger mechanism on MPI\_T overhead}
 		\label{fig:cali-overhead-snapshot}
 	\end{figure*}
 \end{center}

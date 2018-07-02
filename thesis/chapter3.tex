@@ -156,7 +156,7 @@ When we increase the value of the \emph{Eager} limit specified by \verb+MPIR_CVA
   \centering
   \captionsetup{justification=centering}
   \includegraphics[scale=1.0,width=\columnwidth,keepaspectratio]{figures/Overlap-before}
-         \caption{3DStencil: Vampir summary process timeline view before Eager tuning}
+         \caption{3DStencil: Vampir process timeline view before Eager tuning}
  \label{fig:beforeeager}
  \end{figure*}
 
@@ -164,7 +164,7 @@ When we increase the value of the \emph{Eager} limit specified by \verb+MPIR_CVA
   \centering
   \captionsetup{justification=centering}
   \includegraphics[scale=1.0,width=\columnwidth,keepaspectratio]{figures/Overlap-after}
-         \caption{3DStencil: Vampir summary process timeline view after Eager tuning}
+         \caption{3DStencil: Vampir process timeline view after Eager tuning}
  \label{fig:aftereager}
  \end{figure*}
 
@@ -186,7 +186,7 @@ Figure \ref{fig:pycoolrdecr} depicts the decrease in \verb+mv2_total_vbuf_memory
   \centering
   \captionsetup{justification=centering}
   \includegraphics[scale=0.45,keepaspectratio]{figures/Pycoolr-Eager-Part1-plot3-arrows-unblur}
- \caption{PYCOOLR: Increase in total VBUF memory with higher Eager threshold}
+ \caption{PYCOOLR: Total VBUF memory with higher Eager threshold}
  \label{fig:pycoolrincr}
 \end{figure*}
 
@@ -194,7 +194,7 @@ Figure \ref{fig:pycoolrdecr} depicts the decrease in \verb+mv2_total_vbuf_memory
  \centering
   \captionsetup{justification=centering}
  \includegraphics[scale=0.45,keepaspectratio]{figures/Pycoolr-Eager-Part2-plot3-arrows-unblur}
- \caption{PYCOOLR: Decrease in total VBUF memory when freeing unused VBUFs}
+ \caption{PYCOOLR: Total VBUF memory after freeing unused VBUFs}
  \label{fig:pycoolrdecr}
 \end{figure*}
 
@@ -245,7 +245,7 @@ The TAU autotuning plugin ensures that VBUFs from unused pools are freed to offs
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{SNAP: Aggregate time inside various MPI functions (top five by total time)}
+  \caption{SNAP: Aggregate time inside various MPI functions}
   \label{tab:SNAP_profile}
   \resizebox{\columnwidth}{!}{\begin{tabular}{|c|c|c|l|}
     \toprule
@@ -264,7 +264,7 @@ The TAU autotuning plugin ensures that VBUFs from unused pools are freed to offs
   \centering
   \small
   \captionsetup{justification=centering}
-  \caption{SNAP: Average sent message sizes from various MPI functions (top five by message count)}
+  \caption{SNAP: Average sent message sizes from various MPI functions}
   \label{tab:SNAP_message_sizes}
   \resizebox{0.80\columnwidth}{!}{\begin{tabular}{|c|c|c|l|}
     \toprule
